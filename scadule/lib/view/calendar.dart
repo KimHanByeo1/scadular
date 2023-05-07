@@ -1,18 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_size/flutter_keyboard_size.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
+import 'package:scadule/component/addSchedule.dart';
 import 'package:scadule/component/calendarStyle.dart';
+import 'package:scadule/component/eventCard.dart';
 import 'package:scadule/controller/controller.dart';
+import 'package:scadule/controller/select_schedule_controller.dart';
+import 'package:scadule/model/insert_data_model.dart';
 import 'package:scadule/model/model.dart';
+import 'package:scadule/service/schedule_services.dart';
 import 'package:scadule/widget/addSchedule/bottomWidget.dart';
 import 'package:scadule/widget/addSchedule/calendar.dart';
-import 'package:scadule/widget/addSchedule/middleTextField.dart';
+import 'package:scadule/widget/addSchedule/contentTextField.dart';
+import 'package:scadule/widget/addSchedule/titleTextField.dart';
 import 'package:scadule/widget/addSchedule/topText.dart';
 import 'package:scadule/widget/todayEvent/button.dart';
-import 'package:scadule/widget/todayEvent/content.dart';
+import 'package:scadule/widget/todayEvent/eventContents.dart';
 import 'package:scadule/widget/todayEvent/title.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:get/get.dart';
+
+// 네비게이션바 두 번째 아이콘 클릭시 나오는 화면
+// TableCalendar 라이브러리 사용
+// 날짜 클릭 시 AlertDialog로 일정 관리
+// 일정 추가하기 버튼 클릭 시 BottomSheet로 원하는 날짜에 일정 추가하기
+// 각종 카테고리를 이용하여 일정을 추가 관리할 수 있음
 
 class Calendar extends StatefulWidget {
   const Calendar({super.key});
@@ -25,18 +38,11 @@ class _CalendarState extends State<Calendar>
     with SingleTickerProviderStateMixin {
   DateTime _focusedDay = DateTime.now(); // 오늘날짜
   DateTime? _selectedDay; // 선택한 날짜
-  late double _keyboardHeight;
-  late double _screenHeight;
 
   final FocusNodeObserverController getController =
       Get.put(FocusNodeObserverController());
 
-  @override
-  void initState() {
-    super.initState();
-    _keyboardHeight = 0.0;
-    _screenHeight = 0.0;
-  }
+  final controller = Get.put(ScheduleController());
 
   @override
   Widget build(BuildContext context) {
@@ -70,11 +76,18 @@ class _CalendarState extends State<Calendar>
                       setState(() {
                         _selectedDay = selectedDay;
                         _focusedDay = focusedDay;
+                        CalendarModel.selectedDay = selectedDay;
+                        InsertDataModel.startDate =
+                            selectedDay.toString().substring(0, 11);
                       });
+
+                      controller.fetchData();
+
                       // 날짜 클릭 시 해당 날짜에 대한 정보를 showDialog로 출력
                       clickEvent(selectedDay);
-                      _keyboardHeight = value.keyboardHeight;
-                      _screenHeight = value.screenHeight;
+
+                      // _keyboardHeight = value.keyboardHeight;
+                      // _screenHeight = value.screenHeight;
                     },
 
                     // 내가 선택한 날짜
@@ -119,7 +132,7 @@ class _CalendarState extends State<Calendar>
     );
   }
 
-  void clickEvent(selectedDay) {
+  void clickEvent(DateTime selectedDay) {
     showDialog(
       context: context,
       builder: (context) {
@@ -131,60 +144,29 @@ class _CalendarState extends State<Calendar>
           title: Column(
             children: const [
               TopTitle(),
-              SizedBox(
-                height: 3,
-              ),
-              EventContent()
             ],
           ),
           content: SizedBox(
-            height: MediaQuery.of(context).size.height * 0.35,
-            child: ListTile(
-              title: Text(DateFormat.yMd('ko_KR').format(selectedDay)),
-              trailing: const Icon(Icons.keyboard_arrow_down),
+            height: MediaQuery.of(context).size.height * 0.4,
+            width: 0,
+            child: SingleChildScrollView(
+              child: Column(
+                children: const [
+                  EventCard(),
+                ],
+              ),
             ),
           ),
           actions: [
             AddScheduleButton(
               onPressed: () {
-                addSchedule();
+                AddSchedule().addSchedule(context);
                 Model.height = 0.583;
                 getController.focusNodeObserver.value = false;
+                getController.contentOnOff.value = false;
               },
             ),
           ],
-        );
-      },
-    );
-  }
-
-  void addSchedule() {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: context.theme.colorScheme.background,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
-      builder: (BuildContext context) {
-        return StatefulBuilder(
-          builder: (BuildContext context, StateSetter setState) {
-            return AnimatedSize(
-              duration: const Duration(milliseconds: 100),
-              curve: Curves.linear, // 일정한 속도로 에니메이션 처리
-              vsync: this, // 화면이 새로 그려지는 주기와 동일하게 업데이트함(불필요한 업데이트 X)
-              // height: (MediaQuery.of(context).size.height * 0.6),
-              child: SizedBox(
-                height: MediaQuery.of(context).size.height * Model.height,
-                child: Column(
-                  children: [
-                    const TopText(),
-                    const MiddleTextField(),
-                    BottomWidget(stateSetter: setState),
-                    const BottomCalendar(),
-                  ],
-                ),
-              ),
-            );
-          },
         );
       },
     );

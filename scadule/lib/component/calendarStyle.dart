@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:table_calendar/table_calendar.dart';
 
 class CalendarStyles {
   static String convertWeekdayToStringValue(int weekDay) {
@@ -26,14 +25,16 @@ class CalendarStyles {
 
   static Color dayToColor(DateTime date, BuildContext context,
       {double opacity = 1}) {
-    return date.weekday == DateTime.sunday
+    return date.weekday == DateTime.sunday // 일요일이면 빨강
         ? Colors.red[300]!.withOpacity(opacity)
-        : date.weekday == DateTime.saturday
+        : date.weekday == DateTime.saturday // 토요일이면 파랑
             ? Colors.blue[300]!.withOpacity(opacity)
+            // 나머지 검정 or 흰색
             : context.theme.colorScheme.onBackground.withOpacity(opacity);
   }
 }
 
+// 캘린더 1일 ~ 마지막일의 text와 textStyle 컴포넌트
 class Dow extends StatelessWidget {
   final String text;
   final Color color;
@@ -56,6 +57,7 @@ class Dow extends StatelessWidget {
   }
 }
 
+// 캘린더 주말 텍스트 색상 변경 컴포넌트(평일: 검정 or 흰색, 일요일: 빨강, 토요일: 파랑)
 class Day extends StatelessWidget {
   final DateTime date;
   final Color color;

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:scadule/component/calendarStyle.dart';
+import 'package:scadule/model/insert_data_model.dart';
 import 'package:scadule/model/model.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -48,6 +49,7 @@ class _BottomCalendarState extends State<BottomCalendar> {
         onDaySelected: (selectedDay, focusedDay) {
           setState(() {
             _selectedDay = selectedDay;
+            // CalendarModel.selectedDay = selectedDay;
           });
           // _rangeStart = _focusedDay;
           if (Model.qwe == 0) {
@@ -55,7 +57,10 @@ class _BottomCalendarState extends State<BottomCalendar> {
               if (!isSameDay(selectedDay, _selectedDay)) {
                 setState(() {
                   _selectedDay = selectedDay;
-                  // _focusedDay = focusedDay;
+                  // CalendarModel.selectedDay = selectedDay;
+                  InsertDataModel.startDate =
+                      selectedDay.toString().substring(0, 11);
+                  _focusedDay = focusedDay;
                 });
               }
             });

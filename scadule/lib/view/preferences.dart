@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:scadule/widget/screen_mode.dart';
 
+// 환경설정 페이지
+// Getx 라이브러리를 통하여 테마를 변경할 수 있음.
+
 class Preferences extends StatefulWidget {
   const Preferences({super.key});
 

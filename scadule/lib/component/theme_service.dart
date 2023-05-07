@@ -3,6 +3,9 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:scadule/component/themes.dart';
 
+// 사용자가 설정한 테마 데이터 저장
+// 리빌드시 변경 값 저장
+
 class ThemeService extends GetxController {
   final _getStorage = GetStorage();
   final storageKey = 'isDarkMode';
