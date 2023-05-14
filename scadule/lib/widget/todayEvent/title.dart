@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:scadule/component/preferences.dart';
 import 'package:scadule/model/model.dart';
 
 class TopTitle extends StatelessWidget {
@@ -16,25 +17,25 @@ class TopTitle extends StatelessWidget {
           children: [
             Text(
               formatted,
-              style: const TextStyle(fontSize: 15),
+              style: TextStyle(
+                fontSize: 15,
+                fontStyle: Preferences().loadFontValue()
+                    ? FontStyle.normal
+                    : FontStyle.italic,
+              ),
             ),
-            // Expanded(child: Container()),
-            // SizedBox(
-            //   height: MediaQuery.of(context).size.height * 0.028,
-            //   child: IconButton(
-            //     onPressed: () {
-            //       //
-            //     },
-            //     icon: const Icon(Icons.delete),
-            //   ),
-            // ),
           ],
         ),
         Row(
           children: [
             Text(
               subTitle(null)[0],
-              style: const TextStyle(fontSize: 12),
+              style: TextStyle(
+                fontSize: 12,
+                fontStyle: Preferences().loadFontValue()
+                    ? FontStyle.normal
+                    : FontStyle.italic,
+              ),
             ),
           ],
         ),
@@ -74,10 +75,10 @@ class TopTitle extends StatelessWidget {
       text2 = '내일';
     } else if (index < 1) {
       text = 'D + ${index.toString().replaceAll('-', '')}';
-      text2 = formatter.format(CalendarModel.selectedDay);
+      text2 = formatter.format(ymdString2);
     } else if (index > 0) {
       text = 'D - ${index.toString()}';
-      text2 = formatter.format(CalendarModel.selectedDay);
+      text2 = formatter.format(ymdString2);
     }
     return [text, text2];
   }

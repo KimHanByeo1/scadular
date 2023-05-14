@@ -18,35 +18,12 @@ class DatabaseHandler {
                                   startDate text,
                                   endDate text,
                                   category text,
-                                  clear TINYINT(1) DEFAULT 0,
+                                  complet TINYINT(1) DEFAULT 0,
                                   decideOrder integer
                                   )
             """);
       },
       version: 1,
     );
-  }
-
-  // Future<List<Schedule>> scheduleInfo() async {
-  //   final Database db = await initializeDB();
-  //   final List<Map<String, Object?>> queryResult = await db.rawQuery(
-  //     "select * from calendar",
-  //   );
-  //   return queryResult.map((e) => Schedule.fromMap(e)).toList();
-  // }
-
-  Future<int> sampleInsert() async {
-    int result = 0;
-    final Database db = await initializeDB(); //그런애있냐 하고 이니셜라이징하고
-    result = await db.rawInsert(
-        "insert into calendar (title, content, startDate, endDate, category) values(?,?,?,?,?)",
-        [
-          'Title',
-          'Content',
-          (DateTime.now().toString()),
-          (DateTime.now().toString()),
-          '기타',
-        ]);
-    return result;
   }
 }

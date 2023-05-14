@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:scadule/component/theme_service.dart';
+import 'package:scadule/component/preferences.dart';
 
 // 코드가 너무 길어서 환경설정 front는 class를 분리함
 
@@ -13,11 +13,13 @@ class ScreenMode extends StatefulWidget {
 
 class _ScreenModeState extends State<ScreenMode> {
   late List<bool> screenColorMode;
+  late bool startingDayOfWeek;
 
   @override
   void initState() {
     super.initState();
     screenColorMode = [false, false, true];
+    startingDayOfWeek = false;
   }
 
   @override
@@ -29,7 +31,7 @@ class _ScreenModeState extends State<ScreenMode> {
           onTap: () {
             setState(() {
               screenColorMode = [true, false, false];
-              ThemeService().changeThemeMode('light');
+              Preferences().changeThemeMode('light');
             });
           },
           child: Padding(
@@ -49,11 +51,14 @@ class _ScreenModeState extends State<ScreenMode> {
                     const SizedBox(height: 15.0), // 박스 상단 사이즈
                     Row(
                       children: [
-                        const Text(
+                        Text(
                           '라이트 모드',
                           style: TextStyle(
                             fontWeight: FontWeight.bold, // 텍스트 스타일 볼드
                             fontSize: 16.0, // 텍스트 사이즈
+                            fontStyle: Preferences().loadFontValue()
+                                ? FontStyle.normal
+                                : FontStyle.italic,
                           ),
                         ),
                         Expanded(
@@ -98,7 +103,7 @@ class _ScreenModeState extends State<ScreenMode> {
             setState(() {
               screenColorMode = [false, true, false];
               // Get.changeTheme(Themes().darkMode);
-              ThemeService().changeThemeMode('dark');
+              Preferences().changeThemeMode('dark');
             });
           },
           child: Padding(
@@ -119,11 +124,14 @@ class _ScreenModeState extends State<ScreenMode> {
                     const SizedBox(height: 15.0), // 박스 상단 사이즈
                     Row(
                       children: [
-                        const Text(
+                        Text(
                           '다크 모드',
                           style: TextStyle(
                             fontWeight: FontWeight.bold, // 텍스트 스타일 볼드
                             fontSize: 16.0, // 텍스트 사이즈
+                            fontStyle: Preferences().loadFontValue()
+                                ? FontStyle.normal
+                                : FontStyle.italic,
                           ),
                         ),
                         Expanded(
@@ -188,11 +196,14 @@ class _ScreenModeState extends State<ScreenMode> {
                     const SizedBox(height: 15.0), // 박스 상단 사이즈
                     Row(
                       children: [
-                        const Text(
+                        Text(
                           '시스템 모드',
                           style: TextStyle(
                             fontWeight: FontWeight.bold, // 텍스트 스타일 볼드
                             fontSize: 16.0, // 텍스트 사이즈
+                            fontStyle: Preferences().loadFontValue()
+                                ? FontStyle.normal
+                                : FontStyle.italic,
                           ),
                         ),
                         Expanded(

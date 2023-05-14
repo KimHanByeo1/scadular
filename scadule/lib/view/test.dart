@@ -16,6 +16,7 @@ class _BottomCalendarState extends State<BottomCalendar> {
   final controller = Get.put(Model());
   DateTime? saveStartDate;
   late int num;
+  DateTime? _selectedDay; // 선택한 날짜
 
   @override
   void initState() {
@@ -61,11 +62,6 @@ class _BottomCalendarState extends State<BottomCalendar> {
             ),
             rangeHighlightColor:
                 const Color.fromARGB(255, 110, 183, 243).withOpacity(0.4),
-            // todayDecoration: BoxDecoration(
-            //   color: Colors.transparent,
-            //   shape: BoxShape.circle,
-            //   border: Border.all(color: Colors.green, width: 1.5),
-            // ),
           ),
 
           // Day 클릭 이벤트
@@ -80,7 +76,6 @@ class _BottomCalendarState extends State<BottomCalendar> {
                 if (num % 2 == 0) {
                   saveStartDate = selectedDay;
                 } else {
-                  // 첫 번째 선택 값이 두 번째 선택 값보다 클 때
                   if (changeType(selectedDay) < changeType(saveStartDate!)) {
                     controller.rangeEnd.value = saveStartDate!;
                     controller.rangeStart.value = selectedDay;

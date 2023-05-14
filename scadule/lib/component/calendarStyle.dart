@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:scadule/component/preferences.dart';
 
 class CalendarStyles {
   static String convertWeekdayToStringValue(int weekDay) {
@@ -51,7 +52,13 @@ class Dow extends StatelessWidget {
     return Center(
       child: Text(
         text,
-        style: GoogleFonts.notoSans(color: color, fontSize: fontSize),
+        style: TextStyle(
+          color: color,
+          fontSize: fontSize,
+          fontStyle: Preferences().loadFontValue()
+              ? FontStyle.normal
+              : FontStyle.italic,
+        ),
       ),
     );
   }
@@ -86,10 +93,13 @@ class Day extends StatelessWidget {
           Center(
             child: Text(
               '${date.day}',
-              style: GoogleFonts.notoSans(
-                  color:
-                      isToday ? context.theme.colorScheme.onBackground : color,
-                  fontSize: 16),
+              style: TextStyle(
+                color: isToday ? context.theme.colorScheme.onBackground : color,
+                fontSize: 16,
+                fontStyle: Preferences().loadFontValue()
+                    ? FontStyle.normal
+                    : FontStyle.italic,
+              ),
             ),
           ),
         ],

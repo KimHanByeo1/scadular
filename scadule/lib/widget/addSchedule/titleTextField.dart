@@ -53,8 +53,6 @@ class TitleTextFieldState extends State<TitleTextField> {
     super.dispose();
   }
 
-  final formKey = GlobalKey<TitleTextFieldState>();
-
   @override
   Widget build(BuildContext context) {
     return Padding(

@@ -2,17 +2,24 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:scadule/component/calendarStyle.dart';
+import 'package:scadule/component/preferences.dart';
 import 'package:scadule/controller/controller.dart';
 import 'package:scadule/controller/select_schedule_controller.dart';
 import 'package:scadule/model/insert_data_model.dart';
 import 'package:scadule/model/model.dart';
+import 'package:scadule/model/schedule.dart';
 import 'package:scadule/widget/todayEvent/title.dart';
 
 class BottomWidget extends StatefulWidget {
   final StateSetter stateSetter;
   final String? category;
-  // const BottomCalendar(this.category, {Key? key}) : super(key: key);
-  const BottomWidget(this.category, {required this.stateSetter, Key? key})
+  final String? startDate;
+  final List<String>? result;
+  final Schedule? scheduleList;
+
+  const BottomWidget(
+      this.category, this.startDate, this.result, this.scheduleList,
+      {required this.stateSetter, Key? key})
       : super(key: key);
 
   @override
@@ -26,6 +33,7 @@ class _BottomWidgetState extends State<BottomWidget> {
       Get.put(FocusNodeObserverController());
 
   final controller = Get.put(ScheduleController());
+  final modelController = Get.put(Model());
 
   String _selectedButton = '하루';
   Rx<bool> calendarOnOff = false.obs;
@@ -33,7 +41,7 @@ class _BottomWidgetState extends State<BottomWidget> {
   late String categoryValue;
   late List<String> items;
 
-  int _selected = 0;
+  String _selected = '하루';
 
   @override
   void initState() {
@@ -77,11 +85,18 @@ class _BottomWidgetState extends State<BottomWidget> {
                 Obx(
                   () => getController.focusNodeObserver.value ||
                           getController.focusNodeObserver2.value
-                      ? Text(_selectedButton == '하루'
-                          ? const TopTitle().subTitle(null)[1]
-                          : _selectedButton == '기간'
-                              ? '기간 일정'
-                              : '다중 일정')
+                      ? Text(
+                          _selectedButton == '하루'
+                              ? const TopTitle().subTitle(widget.startDate)[1]
+                              : _selectedButton == '기간'
+                                  ? '기간 일정'
+                                  : '다중 일정',
+                          style: TextStyle(
+                            fontStyle: Preferences().loadFontValue()
+                                ? FontStyle.normal
+                                : FontStyle.italic,
+                          ),
+                        )
                       : const Icon(Icons.keyboard_arrow_up),
                 ),
                 SizedBox(
@@ -155,7 +170,14 @@ class _BottomWidgetState extends State<BottomWidget> {
                 context: context,
                 builder: (BuildContext context) {
                   return CupertinoActionSheet(
-                    title: const Text('카테고리를 선택하세요'),
+                    title: Text(
+                      '카테고리를 선택하세요',
+                      style: TextStyle(
+                        fontStyle: Preferences().loadFontValue()
+                            ? FontStyle.normal
+                            : FontStyle.italic,
+                      ),
+                    ),
                     actions: items.map((item) {
                       return CupertinoActionSheetAction(
                         onPressed: () {
@@ -165,11 +187,25 @@ class _BottomWidgetState extends State<BottomWidget> {
                             InsertDataModel.category = item;
                           });
                         },
-                        child: Text(item),
+                        child: Text(
+                          item,
+                          style: TextStyle(
+                            fontStyle: Preferences().loadFontValue()
+                                ? FontStyle.normal
+                                : FontStyle.italic,
+                          ),
+                        ),
                       );
                     }).toList(),
                     cancelButton: CupertinoActionSheetAction(
-                      child: const Text('Cancel'),
+                      child: Text(
+                        'Cancel',
+                        style: TextStyle(
+                          fontStyle: Preferences().loadFontValue()
+                              ? FontStyle.normal
+                              : FontStyle.italic,
+                        ),
+                      ),
                       onPressed: () {
                         Navigator.pop(context, 'Cancel');
                       },
@@ -191,8 +227,31 @@ class _BottomWidgetState extends State<BottomWidget> {
             splashColor: context.theme.colorScheme.surfaceVariant,
             borderRadius: BorderRadius.circular(10),
             onTap: () async {
-              await controller.addStudents();
-              controller.fetchData();
+              // 업데이트인지 인서트인지 switch 문
+              // 둘중에서 홈에서 왔는지 켈린더에서 왔는지
+              var statusLocation = widget.result?.take(2).join();
+              switch (statusLocation) {
+                case 'addhome':
+                  await controller.addSchedule();
+                  await controller.getTodayEventData();
+                  controller.getAllEventData();
+                  break;
+                case 'addcalendar':
+                  await controller.addSchedule();
+                  controller.fetchData();
+                  break;
+                case 'updatehome':
+                  await controller.updateSchedule(widget.scheduleList!);
+                  await controller.getTodayEventData();
+                  controller.getAllEventData();
+                  break;
+                case 'updatecalendar':
+                  await controller.updateSchedule(widget.scheduleList!);
+                  controller.fetchData();
+                  break;
+                default:
+                  break;
+              }
               Navigator.of(context).pop();
             },
             child: Row(
@@ -221,14 +280,14 @@ class _BottomWidgetState extends State<BottomWidget> {
   Widget calendarIconList() {
     return Row(
       children: [
-        textComponent('하루', 0),
-        textComponent('기간', 1),
-        textComponent('다중', 2),
+        textComponent('하루'),
+        textComponent('기간'),
+        textComponent('다중'),
       ],
     );
   }
 
-  Widget textComponent(String text, int index) {
+  Widget textComponent(String text) {
     return Row(
       children: [
         SizedBox(
@@ -238,8 +297,12 @@ class _BottomWidgetState extends State<BottomWidget> {
           onPressed: () {
             setState(() {
               _selectedButton = text;
-              _selected = index;
-              Model.qwe = index;
+              _selected = text;
+              Model.calendarCategory = text;
+              modelController.rangeStart.value = DateTime.now();
+              modelController.rangeEnd.value = DateTime.now();
+              modelController.selectedDay.value = DateTime.now();
+              modelController.markers.value = [];
             });
           },
           style: TextButton.styleFrom(
@@ -249,10 +312,10 @@ class _BottomWidgetState extends State<BottomWidget> {
             ),
             backgroundColor: context.theme.colorScheme.surface,
             side: BorderSide(
-              color: _selected == index
+              color: _selected == text
                   ? context.theme.colorScheme.secondary
                   : context.theme.colorScheme.secondary,
-              width: _selected == index ? 2 : 0,
+              width: _selected == text ? 2 : 0,
             ),
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),

@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:scadule/controller/controller.dart';
 import 'package:scadule/model/model.dart';
 import 'package:scadule/model/schedule.dart';
+import 'package:scadule/model/todaySchedule.dart';
 import 'package:scadule/widget/addSchedule/bottomWidget.dart';
 import 'package:scadule/widget/addSchedule/calendar.dart';
 import 'package:scadule/widget/addSchedule/contentTextField.dart';
@@ -13,7 +14,10 @@ class AddSchedule {
   final FocusNodeObserverController getController =
       Get.put(FocusNodeObserverController());
 
-  addSchedule(BuildContext context, [Schedule? scheduleList]) {
+  addSchedule(BuildContext context,
+      [Schedule? scheduleList,
+      TodaySchedule? todaySchedule,
+      List<String>? result]) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -31,13 +35,70 @@ class AddSchedule {
                 height: MediaQuery.of(context).size.height * Model.height,
                 child: Column(
                   children: [
-                    const TopText(),
-                    TitleTextField(scheduleList?.title ?? ''),
-                    if (getController.contentOnOff.value)
-                      ContentTextField(scheduleList?.title ?? ''),
-                    BottomWidget(
-                        stateSetter: setState, scheduleList?.category ?? '메모'),
-                    const BottomCalendar(),
+                    // result[0] == today or notToday
+                    // result[1] == add or update
+                    // result[2] == home or calendar
+                    if (result![0] == 'add') ...[
+                      const TopText(),
+                      const TitleTextField(''),
+                      if (getController.contentOnOff.value)
+                        const ContentTextField(''),
+                      BottomWidget(
+                        stateSetter: setState,
+                        '메모',
+                        scheduleList?.startDate,
+                        result,
+                        scheduleList,
+                      ),
+                      const BottomCalendar(),
+                      //
+                    ] else if (result[0] == 'update') ...[
+                      if (result[1] == 'home') ...[
+                        if (result[2] == 'today') ...[
+                          const TopText(),
+                          TitleTextField(todaySchedule?.title ?? ''),
+                          if (getController.contentOnOff.value)
+                            ContentTextField(todaySchedule?.content ?? ''),
+                          BottomWidget(
+                            stateSetter: setState,
+                            todaySchedule?.category ?? '메모',
+                            todaySchedule?.startDate,
+                            result,
+                            Schedule.fromTodaySchedule(todaySchedule!),
+                          ),
+                          const BottomCalendar(),
+                          //
+                        ] else if (result[2] == 'notToday') ...[
+                          const TopText(),
+                          TitleTextField(scheduleList?.title ?? ''),
+                          if (getController.contentOnOff.value)
+                            ContentTextField(scheduleList?.content ?? ''),
+                          BottomWidget(
+                            stateSetter: setState,
+                            scheduleList?.category ?? '메모',
+                            scheduleList?.startDate,
+                            result,
+                            scheduleList!,
+                          ),
+                          const BottomCalendar(),
+                          //
+                        ]
+                      ] else if (result[1] == 'calendar') ...[
+                        const TopText(),
+                        TitleTextField(scheduleList?.title ?? ''),
+                        if (getController.contentOnOff.value)
+                          ContentTextField(scheduleList?.content ?? ''),
+                        BottomWidget(
+                          stateSetter: setState,
+                          scheduleList?.category ?? '메모',
+                          scheduleList?.startDate,
+                          result,
+                          scheduleList!,
+                        ),
+                        const BottomCalendar(),
+                        //
+                      ]
+                    ]
                   ],
                 ),
               ),

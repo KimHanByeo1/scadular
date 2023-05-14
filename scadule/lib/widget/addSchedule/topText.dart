@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:scadule/component/preferences.dart';
 
 class TopText extends StatelessWidget {
   const TopText({super.key});
@@ -7,14 +8,17 @@ class TopText extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
-      children: const [
+      children: [
         Padding(
-          padding: EdgeInsets.fromLTRB(10, 15, 10, 10),
+          padding: const EdgeInsets.fromLTRB(10, 15, 10, 10),
           child: Text(
             '일정 추가하기!!',
             style: TextStyle(
               fontSize: 17,
               fontWeight: FontWeight.bold,
+              fontStyle: Preferences().loadFontValue()
+                  ? FontStyle.normal
+                  : FontStyle.italic,
             ),
           ),
         ),

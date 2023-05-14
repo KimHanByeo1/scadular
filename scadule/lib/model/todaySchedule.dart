@@ -1,6 +1,4 @@
-import 'package:scadule/model/todaySchedule.dart';
-
-class Schedule {
+class TodaySchedule {
   final int? id;
   final String title;
   final String content;
@@ -9,7 +7,7 @@ class Schedule {
   final String category;
   final int complet;
 
-  Schedule({
+  TodaySchedule({
     this.id,
     required this.title,
     required this.content,
@@ -19,7 +17,7 @@ class Schedule {
     required this.complet,
   });
 
-  Schedule.fromMap(Map<String, dynamic> res)
+  TodaySchedule.fromMap(Map<String, dynamic> res)
       : id = res['id'],
         title = res['title'],
         content = res['content'],
@@ -27,16 +25,4 @@ class Schedule {
         endDate = res['endDate'],
         category = res['category'],
         complet = res['complet'];
-
-  static Schedule fromTodaySchedule(TodaySchedule todaySchedule) {
-    return Schedule(
-      title: todaySchedule.title,
-      content: todaySchedule.content,
-      startDate: todaySchedule.startDate,
-      category: todaySchedule.category,
-      complet: todaySchedule.complet,
-      endDate: todaySchedule.endDate,
-      id: todaySchedule.id,
-    );
-  }
 }

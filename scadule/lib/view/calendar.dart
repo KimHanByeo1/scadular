@@ -1,22 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_size/flutter_keyboard_size.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:intl/intl.dart';
 import 'package:scadule/component/addSchedule.dart';
 import 'package:scadule/component/calendarStyle.dart';
 import 'package:scadule/component/eventCard.dart';
+import 'package:scadule/component/preferences.dart';
 import 'package:scadule/controller/controller.dart';
 import 'package:scadule/controller/select_schedule_controller.dart';
 import 'package:scadule/model/insert_data_model.dart';
 import 'package:scadule/model/model.dart';
+import 'package:scadule/model/schedule.dart';
 import 'package:scadule/service/schedule_services.dart';
-import 'package:scadule/widget/addSchedule/bottomWidget.dart';
-import 'package:scadule/widget/addSchedule/calendar.dart';
-import 'package:scadule/widget/addSchedule/contentTextField.dart';
-import 'package:scadule/widget/addSchedule/titleTextField.dart';
-import 'package:scadule/widget/addSchedule/topText.dart';
 import 'package:scadule/widget/todayEvent/button.dart';
-import 'package:scadule/widget/todayEvent/eventContents.dart';
 import 'package:scadule/widget/todayEvent/title.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:get/get.dart';
@@ -44,6 +38,41 @@ class _CalendarState extends State<Calendar>
 
   final controller = Get.put(ScheduleController());
 
+  List<Schedule> schedules = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadData();
+  }
+
+  _loadData() async {
+    schedules = await ScheduleServices.getData() ?? [];
+  }
+
+  Map<DateTime, List<Schedule>> _getEventsMap(List<Schedule> schedules) {
+    final Map<DateTime, List<Schedule>> events = {};
+    for (final schedule in schedules) {
+      print(schedule.startDate);
+      if (schedule.startDate.isNotEmpty) {
+        final date =
+            DateTime.parse(schedule.startDate.toString().trim()).toLocal();
+        if (events[date] == null) {
+          events[date] = [schedule];
+        } else {
+          events[date]!.add(schedule);
+        }
+      }
+    }
+    return events;
+  }
+
+  List<Schedule> _getEventsForDay(DateTime day, List<Schedule> schedules) {
+    final events = _getEventsMap(schedules);
+    final date = DateTime(day.year, day.month, day.day).toLocal();
+    return events[date] ?? [];
+  }
+
   @override
   Widget build(BuildContext context) {
     return KeyboardSizeProvider(
@@ -59,6 +88,9 @@ class _CalendarState extends State<Calendar>
                   child: TableCalendar(
                     rowHeight: MediaQuery.of(context).size.height * 0.125,
                     locale: 'ko_KR',
+                    startingDayOfWeek: Preferences().loadSwitchValue()
+                        ? StartingDayOfWeek.monday
+                        : StartingDayOfWeek.sunday,
                     // 출력할 달력의 최대 한도
                     firstDay: DateTime.utc(2020, 1, 1),
                     lastDay: DateTime.utc(2030, 12, 31),
@@ -95,13 +127,28 @@ class _CalendarState extends State<Calendar>
                       _focusedDay = focusedDay;
                     },
 
-                    eventLoader: _listOfDayEvents,
+                    eventLoader: (day) {
+                      return _getEventsForDay(day, schedules);
+                    },
 
                     headerStyle: const HeaderStyle(
                       formatButtonVisible: false,
                       titleCentered: true,
-                      // formatButtonDecoration:
                     ),
+
+                    // calendarStyle: CalendarStyle(
+                    //     defaultTextStyle: TextStyle(
+                    //       color: Colors.grey,
+                    //     ),
+                    //     weekendTextStyle: TextStyle(color: Colors.grey),
+                    //     outsideDaysVisible: false,
+                    //     todayDecoration: BoxDecoration(
+                    //         color: Colors.transparent,
+                    //         shape: BoxShape.circle,
+                    //         border:
+                    //             Border.all(color: Colors.green, width: 1.5)),
+                    //     todayTextStyle: TextStyle(
+                    //         fontWeight: FontWeight.bold, color: Colors.grey)),
 
                     calendarBuilders: CalendarBuilders(
                       dowBuilder: (context, date) => Dow(
@@ -121,6 +168,71 @@ class _CalendarState extends State<Calendar>
                             opacity: 0.3),
                         isToday: false,
                       ),
+                      markerBuilder: (context, date, events) {
+                        final markers = <Widget>[];
+
+                        if (events.isNotEmpty) {
+                          final eventCount = events.length;
+                          const maxVisibleCount = 3;
+
+                          for (int i = 0;
+                              i < eventCount && i < maxVisibleCount;
+                              i++) {
+                            markers.add(
+                              Positioned(
+                                bottom: i * 15.0, // 컨테이너 간격을 조절합니다.
+                                left: 8,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: const Color.fromARGB(
+                                        255, 250, 166, 166),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  width: 40,
+                                  height: 12,
+                                  child: Text(
+                                    schedules[i].startDate,
+                                    style: TextStyle(
+                                      fontSize: 5,
+                                      fontStyle: Preferences().loadFontValue()
+                                          ? FontStyle.normal
+                                          : FontStyle.italic,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            );
+                          }
+                          if (eventCount > maxVisibleCount) {
+                            markers.add(
+                              Positioned(
+                                top: maxVisibleCount * 16.0, // 컨테이너 간격을 조절합니다.
+                                // left: 8,
+                                child: Container(
+                                  width: 20,
+                                  height: 12,
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    "...",
+                                    style: TextStyle(
+                                      color: context
+                                          .theme.colorScheme.onBackground,
+                                      fontSize: 13,
+                                      fontStyle: Preferences().loadFontValue()
+                                          ? FontStyle.normal
+                                          : FontStyle.italic,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            );
+                          }
+                        }
+
+                        return Stack(
+                          children: markers,
+                        );
+                      },
                     ),
                   ),
                 ),
@@ -160,7 +272,15 @@ class _CalendarState extends State<Calendar>
           actions: [
             AddScheduleButton(
               onPressed: () {
-                AddSchedule().addSchedule(context);
+                setState(() {
+                  Model.calendarCategory = '하루';
+                });
+                AddSchedule().addSchedule(
+                  context,
+                  null,
+                  null,
+                  ['add', 'calendar'],
+                );
                 Model.height = 0.583;
                 getController.focusNodeObserver.value = false;
                 getController.contentOnOff.value = false;
@@ -170,15 +290,5 @@ class _CalendarState extends State<Calendar>
         );
       },
     );
-  }
-
-  // 필요 없을 거 같음
-  Map<String, List> mySelectedEvents = {};
-  List _listOfDayEvents(DateTime dateTime) {
-    if (mySelectedEvents[DateFormat("yyyy-MM-dd").format(dateTime)] != null) {
-      return mySelectedEvents[DateFormat("yyyy-MM-dd").format(dateTime)]!;
-    } else {
-      return [];
-    }
   }
 }
