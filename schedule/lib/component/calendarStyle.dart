@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:scadule/component/preferences.dart';
+import 'package:scadule/GetX/preferences.dart';
 
 class CalendarStyles {
   static String convertWeekdayToStringValue(int weekDay) {

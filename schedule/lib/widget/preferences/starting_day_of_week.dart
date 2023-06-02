@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:scadule/component/preferences.dart';
+import 'package:scadule/GetX/preferences.dart';
 import 'package:get/get.dart';
 
 class StartingDayOfWeek extends StatefulWidget {

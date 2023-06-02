@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:scadule/component/deleteSchedule.dart';
 import 'package:scadule/controller/select_schedule_controller.dart';
 import 'package:scadule/service/schedule_services.dart';
-import 'package:scadule/widget/todayEvent/eventContents.dart';
+import 'package:scadule/widget/calendar/todayEvent/eventContents.dart';
 
 class EventCard extends StatefulWidget {
   const EventCard({Key? key}) : super(key: key);

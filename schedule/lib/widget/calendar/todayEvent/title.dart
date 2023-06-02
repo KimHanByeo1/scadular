@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:scadule/component/preferences.dart';
+import 'package:scadule/GetX/preferences.dart';
 import 'package:scadule/model/model.dart';
 
 class TopTitle extends StatelessWidget {
@@ -9,7 +9,7 @@ class TopTitle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final DateFormat formatter = DateFormat('yyyy년 M월 d일 (E)', 'ko');
-    final String formatted = formatter.format(CalendarModel.selectedDay);
+    final String formatted = formatter.format(StaticModel.selectedDay);
 
     return Column(
       children: [
@@ -52,7 +52,7 @@ class TopTitle extends StatelessWidget {
     int index;
 
     if (date == null) {
-      result = CalendarModel.selectedDay;
+      result = StaticModel.selectedDay;
     } else {
       result = format.parse(date);
     }

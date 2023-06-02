@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:scadule/component/preferences.dart';
+import 'package:scadule/GetX/preferences.dart';
 
 class AddScheduleButton extends StatelessWidget {
   final Function()? onPressed;

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:scadule/component/preferences.dart';
+import 'package:scadule/GetX/preferences.dart';
 
 class TopText extends StatelessWidget {
-  const TopText({super.key});
+  final String result;
+  const TopText(this.result, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -12,7 +13,7 @@ class TopText extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.fromLTRB(10, 15, 10, 10),
           child: Text(
-            '일정 추가하기!!',
+            result == 'add' ? '일정 추가하기!!' : '일정 수정하기!!',
             style: TextStyle(
               fontSize: 17,
               fontWeight: FontWeight.bold,

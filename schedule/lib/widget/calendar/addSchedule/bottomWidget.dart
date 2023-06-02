@@ -2,13 +2,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:scadule/component/calendarStyle.dart';
-import 'package:scadule/component/preferences.dart';
+import 'package:scadule/GetX/preferences.dart';
 import 'package:scadule/controller/controller.dart';
 import 'package:scadule/controller/select_schedule_controller.dart';
 import 'package:scadule/model/insert_data_model.dart';
 import 'package:scadule/model/model.dart';
 import 'package:scadule/model/schedule.dart';
-import 'package:scadule/widget/todayEvent/title.dart';
+import 'package:scadule/widget/calendar/todayEvent/title.dart';
 
 class BottomWidget extends StatefulWidget {
   final StateSetter stateSetter;
@@ -38,6 +38,9 @@ class _BottomWidgetState extends State<BottomWidget> {
   String _selectedButton = '하루';
   Rx<bool> calendarOnOff = false.obs;
 
+  String choice = '';
+  DateTime now = DateTime.now();
+
   late String categoryValue;
   late List<String> items;
 
@@ -48,6 +51,15 @@ class _BottomWidgetState extends State<BottomWidget> {
     super.initState();
     categoryValue = widget.category ?? '메모';
     items = ['메모', '약속', '기타'];
+    // print(_selectedButton == '하루' && ());
+    choice = StaticModel.selectedDay.toString().substring(0, 10);
+    // now = (DateTime.parse(
+    //         '${DateTime.now().year}-0${DateTime.now().month}-${DateTime.now().day}')
+    //     .toString().substring(0, 10));
+    now = DateTime.parse(DateTime.now().toString().substring(0, 10));
+    print(choice ==
+        now.subtract(const Duration(days: -1)).toString().substring(0, 10));
+    print(choice);
   }
 
   @override
@@ -217,9 +229,17 @@ class _BottomWidgetState extends State<BottomWidget> {
           ),
         ),
         SizedBox(
-          width: _selectedButton == '하루'
-              ? MediaQuery.of(context).size.width * 0.1
-              : MediaQuery.of(context).size.width * 0.16,
+          width: _selectedButton == '하루' &&
+                  (choice == now.toString().substring(0, 10) ||
+                      choice ==
+                          now
+                              .subtract(const Duration(days: -1))
+                              .toString()
+                              .substring(0, 10))
+              ? MediaQuery.of(context).size.width * 0.24
+              : _selectedButton != '하루'
+                  ? MediaQuery.of(context).size.width * 0.16
+                  : MediaQuery.of(context).size.width * 0.09,
         ),
         Material(
           color: context.theme.colorScheme.background,
@@ -230,29 +250,30 @@ class _BottomWidgetState extends State<BottomWidget> {
               // 업데이트인지 인서트인지 switch 문
               // 둘중에서 홈에서 왔는지 켈린더에서 왔는지
               var statusLocation = widget.result?.take(2).join();
+              Navigator.of(context).pop();
+
               switch (statusLocation) {
                 case 'addhome':
                   await controller.addSchedule();
                   await controller.getTodayEventData();
-                  controller.getAllEventData();
+                  await controller.getDailyData();
                   break;
                 case 'addcalendar':
                   await controller.addSchedule();
-                  controller.fetchData();
+                  await controller.fetchData();
                   break;
                 case 'updatehome':
                   await controller.updateSchedule(widget.scheduleList!);
                   await controller.getTodayEventData();
-                  controller.getAllEventData();
+                  await controller.getDailyData();
                   break;
                 case 'updatecalendar':
                   await controller.updateSchedule(widget.scheduleList!);
-                  controller.fetchData();
+                  await controller.fetchData();
                   break;
                 default:
                   break;
               }
-              Navigator.of(context).pop();
             },
             child: Row(
               children: [

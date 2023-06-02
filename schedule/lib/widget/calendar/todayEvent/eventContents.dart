@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:scadule/component/addSchedule.dart';
-import 'package:scadule/component/preferences.dart';
+import 'package:scadule/GetX/preferences.dart';
 import 'package:scadule/controller/select_schedule_controller.dart';
 import 'package:scadule/model/insert_data_model.dart';
 import 'package:scadule/model/model.dart';

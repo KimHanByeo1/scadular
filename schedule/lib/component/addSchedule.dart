@@ -4,11 +4,11 @@ import 'package:scadule/controller/controller.dart';
 import 'package:scadule/model/model.dart';
 import 'package:scadule/model/schedule.dart';
 import 'package:scadule/model/todaySchedule.dart';
-import 'package:scadule/widget/addSchedule/bottomWidget.dart';
-import 'package:scadule/widget/addSchedule/calendar.dart';
-import 'package:scadule/widget/addSchedule/contentTextField.dart';
-import 'package:scadule/widget/addSchedule/titleTextField.dart';
-import 'package:scadule/widget/addSchedule/topText.dart';
+import 'package:scadule/widget/calendar/addSchedule/bottomWidget.dart';
+import 'package:scadule/widget/calendar/addSchedule/calendar.dart';
+import 'package:scadule/widget/calendar/addSchedule/contentTextField.dart';
+import 'package:scadule/widget/calendar/addSchedule/titleTextField.dart';
+import 'package:scadule/widget/calendar/addSchedule/topText.dart';
 
 class AddSchedule {
   final FocusNodeObserverController getController =
@@ -39,7 +39,7 @@ class AddSchedule {
                     // result[1] == add or update
                     // result[2] == home or calendar
                     if (result![0] == 'add') ...[
-                      const TopText(),
+                      const TopText('add'),
                       const TitleTextField(''),
                       if (getController.contentOnOff.value)
                         const ContentTextField(''),
@@ -55,7 +55,7 @@ class AddSchedule {
                     ] else if (result[0] == 'update') ...[
                       if (result[1] == 'home') ...[
                         if (result[2] == 'today') ...[
-                          const TopText(),
+                          const TopText('update'),
                           TitleTextField(todaySchedule?.title ?? ''),
                           if (getController.contentOnOff.value)
                             ContentTextField(todaySchedule?.content ?? ''),
@@ -69,7 +69,7 @@ class AddSchedule {
                           const BottomCalendar(),
                           //
                         ] else if (result[2] == 'notToday') ...[
-                          const TopText(),
+                          const TopText('update'),
                           TitleTextField(scheduleList?.title ?? ''),
                           if (getController.contentOnOff.value)
                             ContentTextField(scheduleList?.content ?? ''),
@@ -84,7 +84,7 @@ class AddSchedule {
                           //
                         ]
                       ] else if (result[1] == 'calendar') ...[
-                        const TopText(),
+                        const TopText('update'),
                         TitleTextField(scheduleList?.title ?? ''),
                         if (getController.contentOnOff.value)
                           ContentTextField(scheduleList?.content ?? ''),

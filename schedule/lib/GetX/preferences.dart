@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:scadule/component/themes.dart';
+import 'package:scadule/GetX/themes.dart';
 
 // 사용자가 설정한 테마 데이터 저장
 // 리빌드시 변경 값 저장
@@ -42,10 +42,8 @@ class Preferences extends GetxController {
   }
 
   saveFontValue(bool value) {
-    print(result.value);
     _getStorage.write(fontKey, value);
     result.value = value;
-    print(result.value);
   }
 
   bool loadFontValue() {

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:scadule/component/preferences.dart';
-import 'package:scadule/component/themes.dart';
+import 'package:scadule/GetX/preferences.dart';
+import 'package:scadule/GetX/themes.dart';
 import 'package:scadule/view/navigation.dart';
 import 'package:get_storage/get_storage.dart';
 

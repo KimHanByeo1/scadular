@@ -10,6 +10,7 @@ class Model extends GetxController {
   RxList markers = [].obs;
 }
 
-class CalendarModel {
+class StaticModel {
   static DateTime selectedDay = DateTime.now();
+  static String eventDataToFetched = 'notPastEvent';
 }

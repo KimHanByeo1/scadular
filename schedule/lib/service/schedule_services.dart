@@ -7,14 +7,14 @@ import 'package:sqflite/sqlite_api.dart';
 import 'package:get/get.dart';
 
 class ScheduleServices {
-  static Future<List<Schedule>?> getData() async {
+  static Stream<List<Schedule>> getData() async* {
     DatabaseHandler handler = DatabaseHandler();
     final Database db = await handler.initializeDB();
 
     final List<Map<String, Object?>> queryResult = await db.rawQuery(
       "SELECT * FROM calendar",
     );
-    return queryResult.map((e) => Schedule.fromMap(e)).toList();
+    yield queryResult.map((e) => Schedule.fromMap(e)).toList();
   }
 
   // 오늘 날짜를 기준으로 다음날 데이터부터 불러오기
@@ -23,10 +23,18 @@ class ScheduleServices {
     DatabaseHandler handler = DatabaseHandler();
     final Database db = await handler.initializeDB();
 
-    final List<Map<String, Object?>> queryResult = await db.rawQuery(
-      "SELECT * FROM calendar WHERE startDate > ? ORDER BY startDate ASC, decideOrder ASC",
-      [DateTime.now().toString().substring(0, 11)],
-    );
+    final List<Map<String, Object?>> queryResult;
+    if (StaticModel.eventDataToFetched == 'pastEvent') {
+      queryResult = await db.rawQuery(
+        "SELECT * FROM calendar WHERE startDate < ? ORDER BY startDate DEsc, decideOrder desc",
+        [DateTime.now().toString().substring(0, 11)],
+      );
+    } else {
+      queryResult = await db.rawQuery(
+        "SELECT * FROM calendar WHERE startDate > ? ORDER BY startDate ASC, decideOrder ASC",
+        [DateTime.now().toString().substring(0, 11)],
+      );
+    }
     return queryResult.map((e) => Schedule.fromMap(e)).toList();
   }
 
@@ -37,9 +45,7 @@ class ScheduleServices {
 
     final List<Map<String, Object?>> queryResult = await db.rawQuery(
       "SELECT * FROM calendar WHERE startDate == ? ORDER BY startDate ASC, decideOrder ASC",
-      [
-        DateTime.now().add(const Duration(days: -1)).toString().substring(0, 11)
-      ],
+      [DateTime.now().toString().substring(0, 11)],
     );
     return queryResult.map((e) => TodaySchedule.fromMap(e)).toList();
   }
@@ -51,7 +57,7 @@ class ScheduleServices {
 
     final List<Map<String, Object?>> queryResult = await db.rawQuery(
       "SELECT * FROM calendar WHERE startDate == ? ORDER BY decideOrder ASC",
-      [CalendarModel.selectedDay.toString().substring(0, 11)],
+      [StaticModel.selectedDay.toString().substring(0, 11)],
     );
     return queryResult.map((e) => Schedule.fromMap(e)).toList();
   }

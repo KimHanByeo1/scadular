@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:scadule/component/preferences.dart';
+import 'package:scadule/GetX/preferences.dart';
 import 'package:scadule/controller/select_schedule_controller.dart';
 import 'package:scadule/service/schedule_services.dart';
 import 'package:get/get.dart';
@@ -25,14 +25,15 @@ class DeleteSchedule {
           actions: [
             TextButton(
               onPressed: () async {
+                Navigator.of(context).pop();
+
                 await ScheduleServices().deleteEvent(id);
                 if (result == 'home') {
-                  controller.getAllEventData();
+                  controller.getDailyData();
                   controller.getTodayEventData();
                 } else {
                   controller.fetchData();
                 }
-                Navigator.of(context).pop();
               },
               child: Text(
                 '예',

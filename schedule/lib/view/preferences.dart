@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:scadule/component/preferences.dart';
+import 'package:scadule/GetX/preferences.dart';
 import 'package:scadule/widget/preferences/app_font.dart';
 import 'package:scadule/widget/preferences/screen_mode.dart';
 import 'package:scadule/widget/preferences/starting_day_of_week.dart';
@@ -44,16 +44,14 @@ class _PreferencesPageState extends State<PreferencesPage> {
               children: [
                 Padding(
                   padding: const EdgeInsets.all(12.0),
-                  child: Obx(
-                    () => Text(
-                      '설정',
-                      style: TextStyle(
-                        fontSize: 35,
-                        fontWeight: FontWeight.bold,
-                        fontStyle: controller.result.value
-                            ? FontStyle.normal
-                            : FontStyle.italic,
-                      ),
+                  child: Text(
+                    '설정',
+                    style: TextStyle(
+                      fontSize: 35,
+                      fontWeight: FontWeight.bold,
+                      fontStyle: Preferences().loadFontValue()
+                          ? FontStyle.normal
+                          : FontStyle.italic,
                     ),
                   ),
                 ),

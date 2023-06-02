@@ -8,16 +8,29 @@ class ScheduleController extends GetxController {
   var scheduleList = <Schedule>[].obs;
   var scheduleTodayList = <TodaySchedule>[].obs;
   var item = [].obs;
+  RxMap groupedData = {}.obs;
+  var items = <Schedule>[].obs;
 
-  // @override
-  // void onInit() {
-  //   super.onInit();
-  //   getAllEventData();
-  // }
-
-  getAllEventData() async {
+  getDailyData() async {
+    groupedData = {}.obs;
     var results = await ScheduleServices.getDailyData();
     scheduleList.value = results!;
+
+    // 데이터 그룹화
+    for (var item in scheduleList) {
+      DateTime key = DateTime.parse(item.startDate.trim()); // 그룹화할 키 생성
+
+      if (groupedData.keys.contains(key)) {
+        groupedData[key]!.add(item); // 해당 키에 데이터 추가
+      } else {
+        groupedData[key] = [item]; // 새로운 키에 데이터 추가
+      }
+    }
+
+    for (int index = 0; index < groupedData.length; index++) {
+      DateTime date = groupedData.keys.elementAt(index);
+      items.value = groupedData[date]!;
+    }
   }
 
   getTodayEventData() async {
@@ -32,6 +45,7 @@ class ScheduleController extends GetxController {
   }
 
   addSchedule() async {
+    print(InsertDataModel.title);
     Schedule add = Schedule(
       title: InsertDataModel.title,
       content: InsertDataModel.content,

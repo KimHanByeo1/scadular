@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:scadule/component/preferences.dart';
+import 'package:scadule/GetX/preferences.dart';
 
 class FontPreferences extends StatefulWidget {
   const FontPreferences({super.key});
@@ -12,6 +12,7 @@ class FontPreferences extends StatefulWidget {
 class _FontPreferencesState extends State<FontPreferences> {
   late List<bool> fontPreferences;
   final controller = Get.put(Preferences());
+  final controller1 = Get.find<Preferences>();
 
   @override
   void initState() {
@@ -27,7 +28,7 @@ class _FontPreferencesState extends State<FontPreferences> {
           onTap: () {
             setState(() {
               Preferences().saveFontValue(true);
-              showAlertDialog();
+              showAlertDialog('폰트1');
             });
           },
           child: Padding(
@@ -86,7 +87,7 @@ class _FontPreferencesState extends State<FontPreferences> {
           onTap: () {
             setState(() {
               Preferences().saveFontValue(false);
-              showAlertDialog1();
+              showAlertDialog('폰트2');
             });
           },
           child: Padding(
@@ -146,7 +147,7 @@ class _FontPreferencesState extends State<FontPreferences> {
     );
   }
 
-  showAlertDialog() {
+  showAlertDialog(String font) {
     showDialog(
       context: context,
       builder: (context) {
@@ -156,36 +157,23 @@ class _FontPreferencesState extends State<FontPreferences> {
             borderRadius: BorderRadius.circular(20),
           ),
           title: const Text('적용 되었습니다.'),
-          content: const Text('폰트1'),
+          content: Text(font == '폰트1' ? '폰트1' : '폰트2'),
           actions: [
-            ElevatedButton(
-                onPressed: () {
-                  controller.result.value = true;
-                },
-                child: Text('OK'))
-          ],
-        );
-      },
-    );
-  }
-
-  showAlertDialog1() {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          backgroundColor: context.theme.colorScheme.surface,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          title: const Text('적용 되었습니다.'),
-          content: const Text('폰트2'),
-          actions: [
-            ElevatedButton(
-                onPressed: () {
-                  controller.result.value = false;
-                },
-                child: Text('OK'))
+            Center(
+              child: SizedBox(
+                width: MediaQuery.of(context).size.width * 0.55,
+                child: ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        font == '폰트1'
+                            ? controller.result.value = true
+                            : controller.result.value = false;
+                      });
+                      Navigator.pop(context);
+                    },
+                    child: const Text('OK')),
+              ),
+            )
           ],
         );
       },
