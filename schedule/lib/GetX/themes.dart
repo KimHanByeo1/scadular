@@ -34,7 +34,6 @@ class Themes {
       onSurface: LightColors.gray5, // text3
       onBackground: LightColors.important, //text1
       error: CommonColors.red, // danger
-
       onError: LightColors.basic, //no use
       brightness: Brightness.light,
     ),

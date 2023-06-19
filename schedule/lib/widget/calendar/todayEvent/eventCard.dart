@@ -23,17 +23,17 @@ class _EventCardState extends State<EventCard> {
         return ReorderableListView.builder(
           physics: const NeverScrollableScrollPhysics(),
           shrinkWrap: true,
-          itemCount: controller.scheduleList.length,
+          itemCount: controller.notPastEventList.length,
           onReorder: (oldIndex, newIndex) {
             setState(() {
               if (oldIndex < newIndex) {
                 newIndex -= 1;
               }
-              controller.scheduleList.insert(
+              controller.notPastEventList.insert(
                 newIndex,
-                controller.scheduleList.removeAt(oldIndex),
+                controller.notPastEventList.removeAt(oldIndex),
               );
-              ScheduleServices().updateEventList(controller.scheduleList);
+              ScheduleServices().updateEventList(controller.notPastEventList);
             });
           },
           itemBuilder: (BuildContext context, int index) {
@@ -47,8 +47,8 @@ class _EventCardState extends State<EventCard> {
                     onPressed: (context) {
                       DeleteSchedule().showDeleteEventDialog(
                         context,
-                        controller.scheduleList[index].id!,
-                        'calendar',
+                        controller.notPastEventList[index].id!,
+                        ['calendar', 'notPast'],
                       );
                     },
                     backgroundColor: const Color.fromARGB(255, 248, 112, 112),
@@ -61,7 +61,7 @@ class _EventCardState extends State<EventCard> {
               child: SizedBox(
                 height: MediaQuery.of(context).size.height * 0.07,
                 child: EventContents(
-                  controller.scheduleList[index],
+                  controller.notPastEventList[index],
                 ),
               ),
             );

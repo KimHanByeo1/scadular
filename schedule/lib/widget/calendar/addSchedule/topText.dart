@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:scadule/GetX/preferences.dart';
 
 class TopText extends StatelessWidget {
   final String result;
@@ -14,12 +13,9 @@ class TopText extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(10, 15, 10, 10),
           child: Text(
             result == 'add' ? '일정 추가하기!!' : '일정 수정하기!!',
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 17,
               fontWeight: FontWeight.bold,
-              fontStyle: Preferences().loadFontValue()
-                  ? FontStyle.normal
-                  : FontStyle.italic,
             ),
           ),
         ),

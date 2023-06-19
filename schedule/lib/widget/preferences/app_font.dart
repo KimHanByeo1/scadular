@@ -27,8 +27,7 @@ class _FontPreferencesState extends State<FontPreferences> {
         GestureDetector(
           onTap: () {
             setState(() {
-              Preferences().saveFontValue(true);
-              showAlertDialog('폰트1');
+              // showAlertDialog('폰트1');
             });
           },
           child: Padding(
@@ -48,14 +47,11 @@ class _FontPreferencesState extends State<FontPreferences> {
                     const SizedBox(height: 15.0), // 박스 상단 사이즈
                     Row(
                       children: [
-                        Text(
+                        const Text(
                           '폰트 1',
                           style: TextStyle(
                             fontWeight: FontWeight.bold, // 텍스트 스타일 볼드
                             fontSize: 16.0, // 텍스트 사이즈
-                            fontStyle: Preferences().loadFontValue()
-                                ? FontStyle.normal
-                                : FontStyle.italic,
                           ),
                         ),
                         Expanded(
@@ -64,14 +60,15 @@ class _FontPreferencesState extends State<FontPreferences> {
                             // Row 안에서의 위치 조정
                             alignment: Alignment.centerRight, // 우측으로 정렬
                             child: Container(
-                              child: Preferences().loadFontValue()
-                                  ? const Icon(
-                                      Icons.check,
-                                      size: 20.0,
-                                      // color: Colors.white,
-                                    )
-                                  : null,
-                            ),
+                                // child:
+                                //     controller.fontStyle.value == FontStyle.normal
+                                //         ? const Icon(
+                                //             Icons.check,
+                                //             size: 20.0,
+                                //             // color: Colors.white,
+                                //           )
+                                //         : null,
+                                ),
                           ),
                         ),
                       ],
@@ -86,8 +83,7 @@ class _FontPreferencesState extends State<FontPreferences> {
         GestureDetector(
           onTap: () {
             setState(() {
-              Preferences().saveFontValue(false);
-              showAlertDialog('폰트2');
+              // showAlertDialog('폰트2');
             });
           },
           child: Padding(
@@ -107,15 +103,11 @@ class _FontPreferencesState extends State<FontPreferences> {
                     const SizedBox(height: 15.0), // 박스 상단 사이즈
                     Row(
                       children: [
-                        Text(
+                        const Text(
                           '폰트 2',
                           style: TextStyle(
                             fontWeight: FontWeight.bold, // 텍스트 스타일 볼드
                             fontSize: 16.0, // 텍스트 사이즈
-
-                            fontStyle: Preferences().loadFontValue()
-                                ? FontStyle.normal
-                                : FontStyle.italic,
                           ),
                         ),
                         Expanded(
@@ -124,14 +116,15 @@ class _FontPreferencesState extends State<FontPreferences> {
                             // Row 안에서의 위치 조정
                             alignment: Alignment.centerRight, // 우측으로 정렬
                             child: Container(
-                              child: !Preferences().loadFontValue()
-                                  ? const Icon(
-                                      Icons.check,
-                                      size: 20.0,
-                                      // color: Colors.white,
-                                    )
-                                  : null,
-                            ),
+                                // child:
+                                //     controller.fontStyle.value == FontStyle.italic
+                                //         ? const Icon(
+                                //             Icons.check,
+                                //             size: 20.0,
+                                //             // color: Colors.white,
+                                //           )
+                                //         : null,
+                                ),
                           ),
                         ),
                       ],
@@ -147,36 +140,36 @@ class _FontPreferencesState extends State<FontPreferences> {
     );
   }
 
-  showAlertDialog(String font) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          backgroundColor: context.theme.colorScheme.surface,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          title: const Text('적용 되었습니다.'),
-          content: Text(font == '폰트1' ? '폰트1' : '폰트2'),
-          actions: [
-            Center(
-              child: SizedBox(
-                width: MediaQuery.of(context).size.width * 0.55,
-                child: ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        font == '폰트1'
-                            ? controller.result.value = true
-                            : controller.result.value = false;
-                      });
-                      Navigator.pop(context);
-                    },
-                    child: const Text('OK')),
-              ),
-            )
-          ],
-        );
-      },
-    );
-  }
+  // showAlertDialog(String font) {
+  //   showDialog(
+  //     context: context,
+  //     builder: (context) {
+  //       return AlertDialog(
+  //         backgroundColor: context.theme.colorScheme.surface,
+  //         shape: RoundedRectangleBorder(
+  //           borderRadius: BorderRadius.circular(20),
+  //         ),
+  //         title: const Text('적용 되었습니다.'),
+  //         content: Text(font == '폰트1' ? '폰트1' : '폰트2'),
+  //         actions: [
+  //           Center(
+  //             child: SizedBox(
+  //               width: MediaQuery.of(context).size.width * 0.55,
+  //               child: ElevatedButton(
+  //                   onPressed: () {
+  //                     setState(() {
+  //                       font == '폰트1'
+  //                           ? controller.result.value = true
+  //                           : controller.result.value = false;
+  //                     });
+  //                     Navigator.pop(context);
+  //                   },
+  //                   child: const Text('OK')),
+  //             ),
+  //           )
+  //         ],
+  //       );
+  //     },
+  //   );
+  // }
 }

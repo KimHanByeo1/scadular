@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:scadule/component/addSchedule.dart';
-import 'package:scadule/GetX/preferences.dart';
 import 'package:scadule/controller/select_schedule_controller.dart';
 import 'package:scadule/model/insert_data_model.dart';
 import 'package:scadule/model/model.dart';
 import 'package:scadule/model/schedule.dart';
 import 'package:scadule/service/schedule_services.dart';
 import 'package:get/get.dart';
+import 'package:scadule/widget/calendar/todayEvent/progressBar.dart';
 
 class EventContents extends StatefulWidget {
   final Schedule scheduleList;
@@ -60,12 +60,9 @@ class _EventContentsState extends State<EventContents> {
                       children: [
                         Text(
                           widget.scheduleList.category,
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: Colors.black,
                             fontSize: 12,
-                            fontStyle: Preferences().loadFontValue()
-                                ? FontStyle.normal
-                                : FontStyle.italic,
                           ),
                         )
                       ],
@@ -76,11 +73,8 @@ class _EventContentsState extends State<EventContents> {
                           child: RichText(
                             text: TextSpan(
                               text: widget.scheduleList.title,
-                              style: TextStyle(
+                              style: const TextStyle(
                                 color: Colors.black,
-                                fontStyle: Preferences().loadFontValue()
-                                    ? FontStyle.normal
-                                    : FontStyle.italic,
                               ),
                             ),
                             overflow: TextOverflow.ellipsis,
@@ -115,7 +109,8 @@ class _EventContentsState extends State<EventContents> {
                   setState(() {
                     ScheduleServices().updateEventComplet(
                         value! ? 1 : 0, widget.scheduleList.id!);
-                    controller.fetchData();
+                    controller.getSelectedDateData();
+                    ProgressBar().increment(value);
                   });
                 },
                 visualDensity: VisualDensity.compact,

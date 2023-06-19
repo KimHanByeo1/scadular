@@ -5,47 +5,55 @@ import 'package:scadule/model/todaySchedule.dart';
 import 'package:scadule/service/schedule_services.dart';
 
 class ScheduleController extends GetxController {
-  var scheduleList = <Schedule>[].obs;
-  var scheduleTodayList = <TodaySchedule>[].obs;
-  var item = [].obs;
-  RxMap groupedData = {}.obs;
-  var items = <Schedule>[].obs;
+  var notPastEventList = <Schedule>[].obs; // 오늘 기준 날짜가 지나지 않은 이벤트 데이터
+  var pastEventList = <Schedule>[].obs; // 오늘 기준 날짜가 지난 이벤트 데이터
+  var scheduleTodayList = <TodaySchedule>[].obs; // 오늘 이벤트 데이터
 
-  getDailyData() async {
-    groupedData = {}.obs;
+  var checkCount = 0.obs;
+
+  // RxMap -> 모든 이벤트 데이터를 일별로 그룹할 때 사용할 변수
+  RxMap pastGroupedData = {}.obs;
+  RxMap notPastGroupedData = {}.obs;
+
+  // 사용자가 등록한 정보 중에서 지나지 않은 이벤트 데이터만 가져오는 Function
+  getNotPastEventData() async {
+    notPastGroupedData = {}.obs;
     var results = await ScheduleServices.getDailyData();
-    scheduleList.value = results!;
+    notPastEventList.value = results!;
 
-    // 데이터 그룹화
-    for (var item in scheduleList) {
-      DateTime key = DateTime.parse(item.startDate.trim()); // 그룹화할 키 생성
+    // // 데이터 그룹화
+    // for (var item in scheduleList) {
+    //   DateTime key = DateTime.parse(item.startDate.trim()); // 그룹화할 키 생성
 
-      if (groupedData.keys.contains(key)) {
-        groupedData[key]!.add(item); // 해당 키에 데이터 추가
-      } else {
-        groupedData[key] = [item]; // 새로운 키에 데이터 추가
-      }
-    }
-
-    for (int index = 0; index < groupedData.length; index++) {
-      DateTime date = groupedData.keys.elementAt(index);
-      items.value = groupedData[date]!;
-    }
+    //   if (groupedData.keys.contains(key)) {
+    //     groupedData[key]!.add(item); // 해당 키에 데이터 추가
+    //   } else {
+    //     groupedData[key] = [item]; // 새로운 키에 데이터 추가
+    //   }
+    // }
   }
 
+  // 사용자가 등록한 정보 중에서 지난 이벤트 데이터만 가져오는 Function
+  getPastEventData() async {
+    pastGroupedData = {}.obs;
+    var results = await ScheduleServices.getPastEventData();
+    pastEventList.value = results!;
+  }
+
+  // 사용자가 등록한 정보 중에서 오늘 이벤트 데이터만 가져오는 Function
   getTodayEventData() async {
     var results = await ScheduleServices.getTodayData();
     scheduleTodayList.value = results!;
   }
 
-  // 데이터를 전달 받은 후에 동작을 해야하기 때문에 async, await 키워드를 사용한다
-  fetchData() async {
-    var results = await ScheduleServices.fetchProduct();
-    scheduleList.value = results!;
+  // 사용자가 선택한 날짜의 이벤트 데이터만 가져오는 Function
+  getSelectedDateData() async {
+    var results = await ScheduleServices.getSelectedDateData();
+    notPastEventList.value = results!;
   }
 
+  // 이벤트 추가하기
   addSchedule() async {
-    print(InsertDataModel.title);
     Schedule add = Schedule(
       title: InsertDataModel.title,
       content: InsertDataModel.content,
@@ -57,6 +65,7 @@ class ScheduleController extends GetxController {
     await ScheduleServices.listCount(add);
   }
 
+  // 이벤트 수정하기
   updateSchedule(Schedule scheduleList) async {
     if (scheduleList.title.trim() == InsertDataModel.title.trim() &&
         scheduleList.content.trim() == InsertDataModel.content.trim() &&

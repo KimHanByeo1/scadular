@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:scadule/GetX/preferences.dart';
 import 'package:scadule/view/preferences.dart';
-import 'package:scadule/widget/home/defaultCard.dart';
-import 'package:scadule/widget/home/goPastEventButton.dart';
-import 'package:scadule/widget/home/scheduleList_v2.dart';
+import 'package:scadule/widget/home/notPastEvent/defaultCard.dart';
+import 'package:scadule/widget/home/notPastEvent/scheduleList_v1.dart';
+import 'package:scadule/widget/home/pastEvent/goPastEventButton.dart';
 // import 'package:scadule/widget/home/scheduleList%20copy.dart';
 
 // 모든 일정이 나오는 메인 화면
@@ -24,11 +23,10 @@ class Home extends StatelessWidget {
           style: TextStyle(
             color: context.theme.colorScheme.outline,
             fontWeight: FontWeight.bold,
-            fontStyle: Preferences().loadFontValue()
-                ? FontStyle.normal
-                : FontStyle.italic,
           ),
         ),
+        automaticallyImplyLeading: false,
+        // leading: const SizedBox.shrink(),
         elevation: 0,
         centerTitle: false,
         actions: [
@@ -36,6 +34,7 @@ class Home extends StatelessWidget {
             icon: const Icon(Icons.settings),
             onPressed: () {
               Get.to(() => const PreferencesPage());
+              // Get.off(const PreferencesPage());
             },
           ),
         ],

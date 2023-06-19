@@ -12,16 +12,6 @@ class ScreenMode extends StatefulWidget {
 }
 
 class _ScreenModeState extends State<ScreenMode> {
-  late List<bool> screenColorMode;
-  late bool startingDayOfWeek;
-
-  @override
-  void initState() {
-    super.initState();
-    screenColorMode = [false, false, true];
-    startingDayOfWeek = false;
-  }
-
   @override
   Widget build(BuildContext context) {
     // final controller = Get.put(DarkModeController());
@@ -30,7 +20,6 @@ class _ScreenModeState extends State<ScreenMode> {
         GestureDetector(
           onTap: () {
             setState(() {
-              screenColorMode = [true, false, false];
               Preferences().changeThemeMode('light');
             });
           },
@@ -51,14 +40,11 @@ class _ScreenModeState extends State<ScreenMode> {
                     const SizedBox(height: 15.0), // 박스 상단 사이즈
                     Row(
                       children: [
-                        Text(
+                        const Text(
                           '라이트 모드',
                           style: TextStyle(
                             fontWeight: FontWeight.bold, // 텍스트 스타일 볼드
                             fontSize: 16.0, // 텍스트 사이즈
-                            fontStyle: Preferences().loadFontValue()
-                                ? FontStyle.normal
-                                : FontStyle.italic,
                           ),
                         ),
                         Expanded(
@@ -66,27 +52,13 @@ class _ScreenModeState extends State<ScreenMode> {
                           child: Align(
                             // Row 안에서의 위치 조정
                             alignment: Alignment.centerRight, // 우측으로 정렬
-                            child: Container(
-                              // decoration: BoxDecoration(
-                              //   shape: BoxShape.circle,
-                              //   color: screenColorMode[0]
-                              //       ? Theme.of(context).colorScheme.secondary
-                              //       : null,
-                              //   border: Border.all(
-                              //     color: screenColorMode[0]
-                              //         ? Theme.of(context).colorScheme.secondary
-                              //         : Colors.grey,
-                              //     width: 1.0,
-                              //   ),
-                              // ),
-                              child: screenColorMode[0]
-                                  ? const Icon(
-                                      Icons.check,
-                                      size: 20.0,
-                                      // color: Colors.white,
-                                    )
-                                  : null,
-                            ),
+                            child: Preferences().isSaveDarkMode() == 'light'
+                                ? const Icon(
+                                    Icons.check,
+                                    size: 20.0,
+                                    // color: Colors.white,
+                                  )
+                                : null,
                           ),
                         ),
                       ],
@@ -101,7 +73,6 @@ class _ScreenModeState extends State<ScreenMode> {
         GestureDetector(
           onTap: () {
             setState(() {
-              screenColorMode = [false, true, false];
               // Get.changeTheme(Themes().darkMode);
               Preferences().changeThemeMode('dark');
             });
@@ -124,14 +95,11 @@ class _ScreenModeState extends State<ScreenMode> {
                     const SizedBox(height: 15.0), // 박스 상단 사이즈
                     Row(
                       children: [
-                        Text(
+                        const Text(
                           '다크 모드',
                           style: TextStyle(
                             fontWeight: FontWeight.bold, // 텍스트 스타일 볼드
                             fontSize: 16.0, // 텍스트 사이즈
-                            fontStyle: Preferences().loadFontValue()
-                                ? FontStyle.normal
-                                : FontStyle.italic,
                           ),
                         ),
                         Expanded(
@@ -139,27 +107,13 @@ class _ScreenModeState extends State<ScreenMode> {
                           child: Align(
                             // Row 안에서의 위치 조정
                             alignment: Alignment.centerRight, // 우측으로 정렬
-                            child: Container(
-                              // decoration: BoxDecoration(
-                              //   shape: BoxShape.circle,
-                              //   color: screenColorMode[1]
-                              //       ? Theme.of(context).colorScheme.secondary
-                              //       : null,
-                              //   border: Border.all(
-                              //     color: screenColorMode[1]
-                              //         ? Theme.of(context).colorScheme.secondary
-                              //         : Colors.grey,
-                              //     width: 1.0,
-                              //   ),
-                              // ),
-                              child: screenColorMode[1]
-                                  ? const Icon(
-                                      Icons.check,
-                                      size: 20.0,
-                                      // color: Colors.white,
-                                    )
-                                  : null,
-                            ),
+                            child: Preferences().isSaveDarkMode() == 'dark'
+                                ? const Icon(
+                                    Icons.check,
+                                    size: 20.0,
+                                    // color: Colors.white,
+                                  )
+                                : null,
                           ),
                         ),
                       ],
@@ -174,7 +128,7 @@ class _ScreenModeState extends State<ScreenMode> {
         GestureDetector(
           onTap: () {
             setState(() {
-              screenColorMode = [false, false, true];
+              Preferences().changeThemeMode('system');
             });
           },
           child: Padding(
@@ -196,14 +150,11 @@ class _ScreenModeState extends State<ScreenMode> {
                     const SizedBox(height: 15.0), // 박스 상단 사이즈
                     Row(
                       children: [
-                        Text(
+                        const Text(
                           '시스템 모드',
                           style: TextStyle(
                             fontWeight: FontWeight.bold, // 텍스트 스타일 볼드
                             fontSize: 16.0, // 텍스트 사이즈
-                            fontStyle: Preferences().loadFontValue()
-                                ? FontStyle.normal
-                                : FontStyle.italic,
                           ),
                         ),
                         Expanded(
@@ -211,27 +162,13 @@ class _ScreenModeState extends State<ScreenMode> {
                           child: Align(
                             // Row 안에서의 위치 조정
                             alignment: Alignment.centerRight, // 우측으로 정렬
-                            child: Container(
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: screenColorMode[2]
-                                    ? Theme.of(context).colorScheme.secondary
-                                    : null,
-                                border: Border.all(
-                                  color: screenColorMode[2]
-                                      ? Theme.of(context).colorScheme.secondary
-                                      : Colors.grey,
-                                  width: 1.0,
-                                ),
-                              ),
-                              child: screenColorMode[2]
-                                  ? const Icon(
-                                      Icons.check,
-                                      size: 20.0,
-                                      // color: Colors.white,
-                                    )
-                                  : null,
-                            ),
+                            child: Preferences().isSaveDarkMode() == 'system'
+                                ? const Icon(
+                                    Icons.check,
+                                    size: 20.0,
+                                    // color: Colors.white,
+                                  )
+                                : null,
                           ),
                         ),
                       ],

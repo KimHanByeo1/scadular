@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:scadule/GetX/preferences.dart';
 
 class AddScheduleButton extends StatelessWidget {
   final Function()? onPressed;
@@ -28,9 +27,6 @@ class AddScheduleButton extends StatelessWidget {
                   '+ 일정을 추가하세요',
                   style: TextStyle(
                     color: context.theme.colorScheme.onBackground,
-                    fontStyle: Preferences().loadFontValue()
-                        ? FontStyle.normal
-                        : FontStyle.italic,
                   ),
                 ),
               ],

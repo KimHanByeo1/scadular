@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:scadule/model/model.dart';
-import 'package:scadule/widget/home/pastEvent.dart';
+import 'package:scadule/view/pastEvent.dart';
 
 class GoPastEventButton extends StatelessWidget {
   const GoPastEventButton({super.key});
@@ -17,7 +16,6 @@ class GoPastEventButton extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
           child: ElevatedButton(
             onPressed: () {
-              StaticModel.eventDataToFetched = 'pastEvent';
               Get.to(() => const GoPastEvent());
             },
             style: ElevatedButton.styleFrom(

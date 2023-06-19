@@ -12,5 +12,4 @@ class Model extends GetxController {
 
 class StaticModel {
   static DateTime selectedDay = DateTime.now();
-  static String eventDataToFetched = 'notPastEvent';
 }

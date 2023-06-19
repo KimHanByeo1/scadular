@@ -17,7 +17,8 @@ class AddSchedule {
   addSchedule(BuildContext context,
       [Schedule? scheduleList,
       TodaySchedule? todaySchedule,
-      List<String>? result]) {
+      List<String>? result,
+      String? startDate]) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -46,7 +47,7 @@ class AddSchedule {
                       BottomWidget(
                         stateSetter: setState,
                         '메모',
-                        scheduleList?.startDate,
+                        startDate,
                         result,
                         scheduleList,
                       ),

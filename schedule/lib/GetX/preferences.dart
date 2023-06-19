@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:scadule/GetX/themes.dart';
@@ -8,27 +9,41 @@ import 'package:scadule/GetX/themes.dart';
 
 class Preferences extends GetxController {
   final _getStorage = GetStorage();
-  final themeKey = 'isDarkMode';
+  var themeKey = 'isDarkMode';
   final switchKey = 'switch_value';
-  final fontKey = 'fontKey';
-
-  RxBool result = false.obs;
+  final screenModeKey = 'screen_mode_value';
 
   ThemeMode getThemeMode() {
-    return isSaveDarkMode() ? ThemeMode.dark : ThemeMode.light;
+    return isSaveDarkMode() == 'dark'
+        ? ThemeMode.dark
+        : isSaveDarkMode() == 'light'
+            ? ThemeMode.light
+            : ThemeMode.system;
   }
 
-  bool isSaveDarkMode() {
-    return _getStorage.read(themeKey) ?? false;
+  String isSaveDarkMode() {
+    return _getStorage.read(themeKey) ?? '';
   }
 
-  saveThemeMode(bool isDarkMode) {
+  saveThemeMode(String isDarkMode) {
     _getStorage.write(themeKey, isDarkMode);
   }
 
   changeThemeMode(String color) {
-    Get.changeTheme(color == 'dark' ? Themes().darkMode : Themes().lightMode);
-    saveThemeMode(color == 'dark' ? true : false);
+    if (color == 'system') {
+      systemMode();
+    } else {
+      Get.changeTheme(color == 'dark' ? Themes().darkMode : Themes().lightMode);
+      saveThemeMode(color == 'dark' ? 'dark' : 'light');
+    }
+  }
+
+  systemMode() {
+    bool isDark =
+        // ignore: deprecated_member_use
+        SchedulerBinding.instance.window.platformBrightness == Brightness.dark;
+    Get.changeTheme(isDark ? Themes().darkMode : Themes().lightMode);
+    saveThemeMode('system');
   }
 
   // 스위치 값을 저장합니다.
@@ -41,12 +56,12 @@ class Preferences extends GetxController {
     return _getStorage.read(switchKey) ?? false;
   }
 
-  saveFontValue(bool value) {
-    _getStorage.write(fontKey, value);
-    result.value = value;
-  }
+  // saveFontValue(bool value) {
+  //   _getStorage.write(fontKey, value);
+  //   result.value = value;
+  // }
 
-  bool loadFontValue() {
-    return _getStorage.read(fontKey) ?? false;
-  }
+  // bool loadFontValue() {
+  //   return _getStorage.read(fontKey) ?? false;
+  // }
 }

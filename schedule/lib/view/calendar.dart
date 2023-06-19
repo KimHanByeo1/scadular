@@ -11,6 +11,7 @@ import 'package:scadule/model/model.dart';
 import 'package:scadule/model/schedule.dart';
 import 'package:scadule/service/schedule_services.dart';
 import 'package:scadule/widget/calendar/todayEvent/button.dart';
+import 'package:scadule/widget/calendar/todayEvent/progressBar.dart';
 import 'package:scadule/widget/calendar/todayEvent/title.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:get/get.dart';
@@ -89,7 +90,7 @@ class _CalendarState extends State<Calendar>
                                 selectedDay.toString().substring(0, 11);
                             // });
 
-                            controller.fetchData();
+                            controller.getSelectedDateData();
 
                             // // 날짜 클릭 시 해당 날짜에 대한 정보를 showDialog로 출력
                             clickEvent(selectedDay);
@@ -108,20 +109,6 @@ class _CalendarState extends State<Calendar>
                             formatButtonVisible: false,
                             titleCentered: true,
                           ),
-
-                          // calendarStyle: CalendarStyle(
-                          //     defaultTextStyle: TextStyle(
-                          //       color: Colors.grey,
-                          //     ),
-                          //     weekendTextStyle: TextStyle(color: Colors.grey),
-                          //     outsideDaysVisible: false,
-                          //     todayDecoration: BoxDecoration(
-                          //         color: Colors.transparent,
-                          //         shape: BoxShape.circle,
-                          //         border:
-                          //             Border.all(color: Colors.green, width: 1.5)),
-                          //     todayTextStyle: TextStyle(
-                          //         fontWeight: FontWeight.bold, color: Colors.grey)),
 
                           calendarBuilders: CalendarBuilders(
                             dowBuilder: (context, date) => Dow(
@@ -199,43 +186,51 @@ class _CalendarState extends State<Calendar>
     showDialog(
       context: context,
       builder: (context) {
-        return AlertDialog(
-          backgroundColor: context.theme.colorScheme.surface,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          title: const Column(
-            children: [
-              TopTitle(),
-            ],
-          ),
-          content: SizedBox(
-            height: MediaQuery.of(context).size.height * 0.4,
-            width: 0,
-            child: const SingleChildScrollView(
-              child: Column(
+        return Stack(
+          alignment: Alignment.topCenter,
+          children: [
+            AlertDialog(
+              backgroundColor: context.theme.colorScheme.surface,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              title: const Column(
                 children: [
-                  EventCard(),
+                  TopTitle(),
                 ],
               ),
-            ),
-          ),
-          actions: [
-            AddScheduleButton(
-              onPressed: () {
-                setState(() {
-                  Model.calendarCategory = '하루';
-                });
-                AddSchedule().addSchedule(
-                  context,
-                  null,
-                  null,
-                  ['add', 'calendar'],
-                );
-                Model.height = 0.583;
-                getController.focusNodeObserver.value = false;
-                getController.contentOnOff.value = false;
-              },
+              content: SizedBox(
+                height: MediaQuery.of(context).size.height * 0.4,
+                width: 0,
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      ProgressBar(),
+                      EventCard(),
+                    ],
+                  ),
+                ),
+              ),
+              actions: [
+                AddScheduleButton(
+                  onPressed: () {
+                    var selectedDay = _selectedDay.toString().substring(0, 10);
+                    setState(() {
+                      Model.calendarCategory = '하루';
+                    });
+                    AddSchedule().addSchedule(
+                      context,
+                      null,
+                      null,
+                      ['add', 'calendar'],
+                      selectedDay.toString(),
+                    );
+                    Model.height = 0.583;
+                    getController.focusNodeObserver.value = false;
+                    getController.contentOnOff.value = false;
+                  },
+                ),
+              ],
             ),
           ],
         );

@@ -24,17 +24,22 @@ class ScheduleServices {
     final Database db = await handler.initializeDB();
 
     final List<Map<String, Object?>> queryResult;
-    if (StaticModel.eventDataToFetched == 'pastEvent') {
-      queryResult = await db.rawQuery(
-        "SELECT * FROM calendar WHERE startDate < ? ORDER BY startDate DEsc, decideOrder desc",
-        [DateTime.now().toString().substring(0, 11)],
-      );
-    } else {
-      queryResult = await db.rawQuery(
-        "SELECT * FROM calendar WHERE startDate > ? ORDER BY startDate ASC, decideOrder ASC",
-        [DateTime.now().toString().substring(0, 11)],
-      );
-    }
+    queryResult = await db.rawQuery(
+      "SELECT * FROM calendar WHERE startDate > ? ORDER BY startDate ASC, decideOrder ASC",
+      [DateTime.now().toString().substring(0, 11)],
+    );
+    return queryResult.map((e) => Schedule.fromMap(e)).toList();
+  }
+
+  static Future<List<Schedule>?> getPastEventData() async {
+    DatabaseHandler handler = DatabaseHandler();
+    final Database db = await handler.initializeDB();
+
+    final List<Map<String, Object?>> queryResult;
+    queryResult = await db.rawQuery(
+      "SELECT * FROM calendar WHERE startDate < ? AND complet == 0 ORDER BY startDate ASC, decideOrder ASC",
+      [DateTime.now().toString().substring(0, 11)],
+    );
     return queryResult.map((e) => Schedule.fromMap(e)).toList();
   }
 
@@ -51,7 +56,7 @@ class ScheduleServices {
   }
 
   // 선택한 일정 데이터 불러오기
-  static Future<List<Schedule>?> fetchProduct() async {
+  static Future<List<Schedule>?> getSelectedDateData() async {
     DatabaseHandler handler = DatabaseHandler();
     final Database db = await handler.initializeDB();
 

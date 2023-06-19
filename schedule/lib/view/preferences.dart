@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:scadule/GetX/preferences.dart';
-import 'package:scadule/widget/preferences/app_font.dart';
+import 'package:scadule/view/navigation.dart';
 import 'package:scadule/widget/preferences/screen_mode.dart';
 import 'package:scadule/widget/preferences/starting_day_of_week.dart';
 
@@ -32,26 +32,23 @@ class _PreferencesPageState extends State<PreferencesPage> {
             Icons.arrow_back_ios,
           ), // 뒤로가기 아이콘 추가
           onPressed: () {
-            Get.back();
+            Get.offAll(const NavigationPage());
           },
         ),
       ),
       body: Container(
         color: context.theme.colorScheme.background,
-        child: Column(
+        child: const Column(
           children: [
             Row(
               children: [
                 Padding(
-                  padding: const EdgeInsets.all(12.0),
+                  padding: EdgeInsets.all(12.0),
                   child: Text(
                     '설정',
                     style: TextStyle(
                       fontSize: 35,
                       fontWeight: FontWeight.bold,
-                      fontStyle: Preferences().loadFontValue()
-                          ? FontStyle.normal
-                          : FontStyle.italic,
                     ),
                   ),
                 ),
@@ -60,57 +57,48 @@ class _PreferencesPageState extends State<PreferencesPage> {
             Row(
               children: [
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(15, 0, 0, 10),
+                  padding: EdgeInsets.fromLTRB(15, 0, 0, 10),
                   child: Text(
                     '화면 모드',
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      fontStyle: Preferences().loadFontValue()
-                          ? FontStyle.normal
-                          : FontStyle.italic,
                     ),
                   ),
                 ),
               ],
             ),
-            const ScreenMode(),
+            ScreenMode(),
             Row(
               children: [
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(15, 20, 0, 10),
+                  padding: EdgeInsets.fromLTRB(15, 20, 0, 10),
                   child: Text(
                     '캘린더 설정',
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      fontStyle: Preferences().loadFontValue()
-                          ? FontStyle.normal
-                          : FontStyle.italic,
                     ),
                   ),
                 ),
               ],
             ),
-            const StartingDayOfWeek(),
-            Row(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(15, 20, 0, 10),
-                  child: Text(
-                    '폰트 설정',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      fontStyle: Preferences().loadFontValue()
-                          ? FontStyle.normal
-                          : FontStyle.italic,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const FontPreferences(),
+            StartingDayOfWeek(),
+            // Row(
+            //   children: [
+            //     Padding(
+            //       padding: EdgeInsets.fromLTRB(15, 20, 0, 10),
+            //       child: Text(
+            //         '폰트 설정',
+            //         style: TextStyle(
+            //           fontSize: 20,
+            //           fontWeight: FontWeight.bold,
+            //         ),
+            //       ),
+            //     ),
+            //   ],
+            // ),
+            // FontPreferences(),
           ],
         ),
       ),

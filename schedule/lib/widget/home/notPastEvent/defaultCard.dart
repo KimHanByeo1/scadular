@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:scadule/component/addSchedule.dart';
 import 'package:scadule/component/deleteSchedule.dart';
-import 'package:scadule/GetX/preferences.dart';
 import 'package:scadule/controller/select_schedule_controller.dart';
 import 'package:scadule/model/insert_data_model.dart';
 import 'package:scadule/model/model.dart';
@@ -29,7 +28,8 @@ class _DefaultCardState extends State<DefaultCard> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(12, 0, 12, 0),
+      padding: const EdgeInsets.all(0),
+      // padding: const EdgeInsets.fromLTRB(12, 0, 12, 0),
       child: Card(
         shadowColor: Colors.transparent,
         margin: const EdgeInsets.fromLTRB(0, 3, 0, 3),
@@ -44,8 +44,8 @@ class _DefaultCardState extends State<DefaultCard> {
                 Expanded(
                   child: Column(
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(15, 10, 12, 0),
+                      const Padding(
+                        padding: EdgeInsets.fromLTRB(15, 10, 12, 0),
                         child: Row(
                           children: [
                             Text(
@@ -53,9 +53,6 @@ class _DefaultCardState extends State<DefaultCard> {
                               style: TextStyle(
                                 fontSize: 15,
                                 fontWeight: FontWeight.bold,
-                                fontStyle: Preferences().loadFontValue()
-                                    ? FontStyle.normal
-                                    : FontStyle.italic,
                               ),
                             ),
                           ],
@@ -69,11 +66,8 @@ class _DefaultCardState extends State<DefaultCard> {
                               DateFormat('y년 M월 d일 (E)', 'ko').format(
                                   DateFormat("yyyy-MM-dd")
                                       .parse(DateTime.now().toString())),
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 12,
-                                fontStyle: Preferences().loadFontValue()
-                                    ? FontStyle.normal
-                                    : FontStyle.italic,
                               ),
                             ),
                           ],
@@ -95,16 +89,13 @@ class _DefaultCardState extends State<DefaultCard> {
                             context,
                             null,
                             null,
-                            ['add', 'home'],
+                            ['add', 'home', '', 'notPast'],
+                            DateTime.now().toString().substring(0, 10),
                           );
                         },
-                        child: Text(
+                        child: const Text(
                           '할 일 추가',
-                          style: TextStyle(
-                            fontStyle: Preferences().loadFontValue()
-                                ? FontStyle.normal
-                                : FontStyle.italic,
-                          ),
+                          style: TextStyle(),
                         )),
                   ),
                 ),
@@ -113,8 +104,8 @@ class _DefaultCardState extends State<DefaultCard> {
             Obx(
               () {
                 if (controller.scheduleTodayList.isEmpty) {
-                  return Padding(
-                    padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
+                  return const Padding(
+                    padding: EdgeInsets.fromLTRB(8, 0, 8, 8),
                     child: Card(
                       child: Column(
                         children: [
@@ -125,9 +116,6 @@ class _DefaultCardState extends State<DefaultCard> {
                                 '오늘은 등록된 일정이 없습니다.!!❤️‍🔥❤️‍🔥',
                                 style: TextStyle(
                                   fontSize: 15,
-                                  fontStyle: Preferences().loadFontValue()
-                                      ? FontStyle.normal
-                                      : FontStyle.italic,
                                 ),
                               )
                             ],
@@ -139,9 +127,6 @@ class _DefaultCardState extends State<DefaultCard> {
                                 '발 닦고 잠이나 자러 가자고요 ㅎㅎ',
                                 style: TextStyle(
                                   fontSize: 15,
-                                  fontStyle: Preferences().loadFontValue()
-                                      ? FontStyle.normal
-                                      : FontStyle.italic,
                                 ),
                               )
                             ],
@@ -178,7 +163,7 @@ class _DefaultCardState extends State<DefaultCard> {
                                 DeleteSchedule().showDeleteEventDialog(
                                   context,
                                   controller.scheduleTodayList[index].id!,
-                                  'home',
+                                  ['home', 'notPast'],
                                 );
                               },
                               backgroundColor:
@@ -209,7 +194,7 @@ class _DefaultCardState extends State<DefaultCard> {
                                   context,
                                   null,
                                   controller.scheduleTodayList[index],
-                                  ['update', 'home', 'today'],
+                                  ['update', 'home', 'today', 'notPast'],
                                 );
                               });
                             },
@@ -247,14 +232,10 @@ class _DefaultCardState extends State<DefaultCard> {
                                                   controller
                                                       .scheduleTodayList[index]
                                                       .category,
-                                                  style: TextStyle(
+                                                  style: const TextStyle(
                                                     color: Colors.black,
                                                     fontWeight: FontWeight.bold,
                                                     fontSize: 12,
-                                                    fontStyle: Preferences()
-                                                            .loadFontValue()
-                                                        ? FontStyle.normal
-                                                        : FontStyle.italic,
                                                   ),
                                                 ),
                                               ],
@@ -268,12 +249,8 @@ class _DefaultCardState extends State<DefaultCard> {
                                                           .scheduleTodayList[
                                                               index]
                                                           .title,
-                                                      style: TextStyle(
+                                                      style: const TextStyle(
                                                         color: Colors.black,
-                                                        fontStyle: Preferences()
-                                                                .loadFontValue()
-                                                            ? FontStyle.normal
-                                                            : FontStyle.italic,
                                                       ),
                                                     ),
                                                     // 텍스트가 지정 범위를 넘어가면 ... 으로 표시

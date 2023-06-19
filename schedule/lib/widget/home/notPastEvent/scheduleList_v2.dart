@@ -5,14 +5,13 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:scadule/component/addSchedule.dart';
+import 'package:scadule/component/dateCalc.dart';
 import 'package:scadule/component/deleteSchedule.dart';
-import 'package:scadule/GetX/preferences.dart';
 import 'package:scadule/controller/select_schedule_controller.dart';
 import 'package:scadule/model/insert_data_model.dart';
 import 'package:scadule/model/model.dart';
 import 'package:scadule/model/schedule.dart';
 import 'package:scadule/service/schedule_services.dart';
-import 'package:scadule/widget/calendar/todayEvent/title.dart';
 
 class ScheduleList extends StatefulWidget {
   // final String event;
@@ -28,7 +27,7 @@ class _ScheduleListState extends State<ScheduleList> {
   @override
   void initState() {
     super.initState();
-    controller.getDailyData();
+    controller.getNotPastEventData();
   }
 
   @override
@@ -39,10 +38,10 @@ class _ScheduleListState extends State<ScheduleList> {
       return ListView.builder(
         physics: const NeverScrollableScrollPhysics(),
         shrinkWrap: true,
-        itemCount: controller.groupedData.length,
+        itemCount: controller.notPastGroupedData.length,
         itemBuilder: (BuildContext context, int index) {
-          DateTime date = controller.groupedData.keys.elementAt(index);
-          List<Schedule> items = controller.groupedData[date]!;
+          DateTime date = controller.notPastGroupedData.keys.elementAt(index);
+          List<Schedule> items = controller.notPastGroupedData[date]!;
 
           // 일 별 그룹화한 Card Widget
           return Padding(
@@ -68,14 +67,11 @@ class _ScheduleListState extends State<ScheduleList> {
                                 children: [
                                   Text(
                                     // 이벤트 날 까지 며칠 남았는지
-                                    const TopTitle()
+                                    DateCalc()
                                         .subTitle(items.first.startDate)[0],
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       fontSize: 15,
                                       fontWeight: FontWeight.bold,
-                                      fontStyle: Preferences().loadFontValue()
-                                          ? FontStyle.normal
-                                          : FontStyle.italic,
                                     ),
                                   ),
                                 ],
@@ -90,11 +86,8 @@ class _ScheduleListState extends State<ScheduleList> {
                                     DateFormat('y년 M월 d일 (E)', 'ko').format(
                                         DateFormat("yyyy-MM-dd")
                                             .parse(items.first.startDate)),
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       fontSize: 12,
-                                      fontStyle: Preferences().loadFontValue()
-                                          ? FontStyle.normal
-                                          : FontStyle.italic,
                                     ),
                                   ),
                                 ],
@@ -119,26 +112,15 @@ class _ScheduleListState extends State<ScheduleList> {
                                   ['add', 'home'],
                                 );
                               },
-                              child: Text(
+                              child: const Text(
                                 '할 일 추가',
-                                style: TextStyle(
-                                  fontStyle: Preferences().loadFontValue()
-                                      ? FontStyle.normal
-                                      : FontStyle.italic,
-                                ),
+                                style: TextStyle(),
                               )),
                         ),
                       ),
                     ],
                   ),
-                  Obx(
-                    () {
-                      // var reactiveItems = <Schedule>[].obs;
-                      // reactiveItems.value = items.obs;
-
-                      return _EventListView();
-                    },
-                  ),
+                  _EventListView(items)
                 ],
               ),
             ),
@@ -150,15 +132,15 @@ class _ScheduleListState extends State<ScheduleList> {
 
 // ======================= Widget Start ============================
 
-  Widget _EventListView() {
+  Widget _EventListView(List<Schedule> items) {
     // 일별 그룹화 한 Card Widget 안 쪽 ListView
     return ListView.builder(
       physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
-      itemCount: controller.items.length,
+      itemCount: items.length,
       itemBuilder: (context, index) {
         return Slidable(
-          key: ValueKey(controller.items[index].id),
+          key: ValueKey(items[index].id),
           endActionPane: ActionPane(
             motion: const ScrollMotion(),
             dismissible: null,
@@ -167,8 +149,8 @@ class _ScheduleListState extends State<ScheduleList> {
                 onPressed: (context) {
                   DeleteSchedule().showDeleteEventDialog(
                     context,
-                    controller.items[index].id!,
-                    'home',
+                    items[index].id!,
+                    ['home', 'notPast'],
                   );
                 },
                 backgroundColor: const Color.fromARGB(255, 248, 112, 112),
@@ -184,14 +166,14 @@ class _ScheduleListState extends State<ScheduleList> {
               onTap: () {
                 setState(() {
                   Model.calendarCategory = '하루';
-                  InsertDataModel.title = controller.items[index].title;
-                  InsertDataModel.content = controller.items[index].content;
-                  InsertDataModel.startDate = controller.items[index].startDate;
-                  InsertDataModel.endDate = controller.items[index].endDate;
-                  InsertDataModel.category = controller.items[index].category;
+                  InsertDataModel.title = items[index].title;
+                  InsertDataModel.content = items[index].content;
+                  InsertDataModel.startDate = items[index].startDate;
+                  InsertDataModel.endDate = items[index].endDate;
+                  InsertDataModel.category = items[index].category;
                   AddSchedule().addSchedule(
                     context,
-                    controller.items[index],
+                    items[index],
                     null,
                     ['update', 'home', 'notToday'],
                   );
@@ -201,9 +183,9 @@ class _ScheduleListState extends State<ScheduleList> {
                 padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
                 child: Card(
                   shadowColor: Colors.transparent,
-                  color: controller.items[index].category == '메모'
+                  color: items[index].category == '메모'
                       ? const Color.fromARGB(255, 255, 213, 213)
-                      : controller.items[index].category == '약속'
+                      : items[index].category == '약속'
                           ? const Color.fromARGB(255, 228, 253, 228)
                           : const Color.fromARGB(255, 215, 215, 255),
                   margin: const EdgeInsets.fromLTRB(0, 3, 0, 0),
@@ -221,13 +203,10 @@ class _ScheduleListState extends State<ScheduleList> {
                               Row(
                                 children: [
                                   Text(
-                                    controller.items[index].category,
-                                    style: TextStyle(
+                                    items[index].category,
+                                    style: const TextStyle(
                                       color: Colors.black,
                                       fontSize: 12,
-                                      fontStyle: Preferences().loadFontValue()
-                                          ? FontStyle.normal
-                                          : FontStyle.italic,
                                     ),
                                   ),
                                 ],
@@ -237,13 +216,9 @@ class _ScheduleListState extends State<ScheduleList> {
                                   Flexible(
                                     child: RichText(
                                       text: TextSpan(
-                                        text: controller.items[index].title,
-                                        style: TextStyle(
+                                        text: items[index].title,
+                                        style: const TextStyle(
                                           color: Colors.black,
-                                          fontStyle:
-                                              Preferences().loadFontValue()
-                                                  ? FontStyle.normal
-                                                  : FontStyle.italic,
                                         ),
                                       ),
                                       // 텍스트가 지정 범위를 넘어가면 ... 으로 표시
@@ -262,27 +237,25 @@ class _ScheduleListState extends State<ScheduleList> {
                             if (states.contains(MaterialState.selected)) {
                               return Colors.transparent;
                             } else {
-                              return controller.items[index].category == '메모'
+                              return items[index].category == '메모'
                                   ? const Color.fromARGB(255, 250, 166, 166)
-                                  : controller.items[index].category == '약속'
+                                  : items[index].category == '약속'
                                       ? const Color.fromARGB(255, 142, 255, 142)
                                       : const Color.fromARGB(
                                           255, 160, 160, 253);
                             }
                           }),
-                          checkColor: controller.items[index].category == '메모'
+                          checkColor: items[index].category == '메모'
                               ? const Color.fromARGB(255, 250, 166, 166)
-                              : controller.items[index].category == '약속'
+                              : items[index].category == '약속'
                                   ? const Color.fromARGB(255, 142, 255, 142)
                                   : const Color.fromARGB(255, 160, 160, 253),
-                          value: controller.items[index].complet == 1
-                              ? true
-                              : false,
+                          value: items[index].complet == 1 ? true : false,
                           onChanged: (value) {
                             setState(() {
                               ScheduleServices().updateEventComplet(
-                                  value! ? 1 : 0, controller.items[index].id!);
-                              controller.getDailyData();
+                                  value! ? 1 : 0, items[index].id!);
+                              controller.getNotPastEventData();
                             });
                           },
                           visualDensity: VisualDensity.compact,

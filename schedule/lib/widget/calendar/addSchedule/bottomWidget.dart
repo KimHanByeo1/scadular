@@ -2,13 +2,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:scadule/component/calendarStyle.dart';
-import 'package:scadule/GetX/preferences.dart';
+import 'package:scadule/component/dateCalc.dart';
 import 'package:scadule/controller/controller.dart';
 import 'package:scadule/controller/select_schedule_controller.dart';
 import 'package:scadule/model/insert_data_model.dart';
 import 'package:scadule/model/model.dart';
 import 'package:scadule/model/schedule.dart';
-import 'package:scadule/widget/calendar/todayEvent/title.dart';
 
 class BottomWidget extends StatefulWidget {
   final StateSetter stateSetter;
@@ -51,15 +50,8 @@ class _BottomWidgetState extends State<BottomWidget> {
     super.initState();
     categoryValue = widget.category ?? '메모';
     items = ['메모', '약속', '기타'];
-    // print(_selectedButton == '하루' && ());
-    choice = StaticModel.selectedDay.toString().substring(0, 10);
-    // now = (DateTime.parse(
-    //         '${DateTime.now().year}-0${DateTime.now().month}-${DateTime.now().day}')
-    //     .toString().substring(0, 10));
+    choice = widget.startDate!;
     now = DateTime.parse(DateTime.now().toString().substring(0, 10));
-    print(choice ==
-        now.subtract(const Duration(days: -1)).toString().substring(0, 10));
-    print(choice);
   }
 
   @override
@@ -99,15 +91,11 @@ class _BottomWidgetState extends State<BottomWidget> {
                           getController.focusNodeObserver2.value
                       ? Text(
                           _selectedButton == '하루'
-                              ? const TopTitle().subTitle(widget.startDate)[1]
+                              ? DateCalc().subTitle(widget.startDate)[1]
                               : _selectedButton == '기간'
                                   ? '기간 일정'
                                   : '다중 일정',
-                          style: TextStyle(
-                            fontStyle: Preferences().loadFontValue()
-                                ? FontStyle.normal
-                                : FontStyle.italic,
-                          ),
+                          style: const TextStyle(),
                         )
                       : const Icon(Icons.keyboard_arrow_up),
                 ),
@@ -182,13 +170,9 @@ class _BottomWidgetState extends State<BottomWidget> {
                 context: context,
                 builder: (BuildContext context) {
                   return CupertinoActionSheet(
-                    title: Text(
+                    title: const Text(
                       '카테고리를 선택하세요',
-                      style: TextStyle(
-                        fontStyle: Preferences().loadFontValue()
-                            ? FontStyle.normal
-                            : FontStyle.italic,
-                      ),
+                      style: TextStyle(),
                     ),
                     actions: items.map((item) {
                       return CupertinoActionSheetAction(
@@ -201,22 +185,14 @@ class _BottomWidgetState extends State<BottomWidget> {
                         },
                         child: Text(
                           item,
-                          style: TextStyle(
-                            fontStyle: Preferences().loadFontValue()
-                                ? FontStyle.normal
-                                : FontStyle.italic,
-                          ),
+                          style: const TextStyle(),
                         ),
                       );
                     }).toList(),
                     cancelButton: CupertinoActionSheetAction(
-                      child: Text(
+                      child: const Text(
                         'Cancel',
-                        style: TextStyle(
-                          fontStyle: Preferences().loadFontValue()
-                              ? FontStyle.normal
-                              : FontStyle.italic,
-                        ),
+                        style: TextStyle(),
                       ),
                       onPressed: () {
                         Navigator.pop(context, 'Cancel');
@@ -230,12 +206,13 @@ class _BottomWidgetState extends State<BottomWidget> {
         ),
         SizedBox(
           width: _selectedButton == '하루' &&
-                  (choice == now.toString().substring(0, 10) ||
-                      choice ==
+                  (choice.trim() == now.toString().substring(0, 10).trim() ||
+                      choice.trim() ==
                           now
                               .subtract(const Duration(days: -1))
                               .toString()
-                              .substring(0, 10))
+                              .substring(0, 10)
+                              .trim())
               ? MediaQuery.of(context).size.width * 0.24
               : _selectedButton != '하루'
                   ? MediaQuery.of(context).size.width * 0.16
@@ -256,20 +233,20 @@ class _BottomWidgetState extends State<BottomWidget> {
                 case 'addhome':
                   await controller.addSchedule();
                   await controller.getTodayEventData();
-                  await controller.getDailyData();
+                  await controller.getNotPastEventData();
                   break;
                 case 'addcalendar':
                   await controller.addSchedule();
-                  await controller.fetchData();
+                  await controller.getSelectedDateData();
                   break;
                 case 'updatehome':
                   await controller.updateSchedule(widget.scheduleList!);
                   await controller.getTodayEventData();
-                  await controller.getDailyData();
+                  await controller.getNotPastEventData();
                   break;
                 case 'updatecalendar':
                   await controller.updateSchedule(widget.scheduleList!);
-                  await controller.fetchData();
+                  await controller.getSelectedDateData();
                   break;
                 default:
                   break;

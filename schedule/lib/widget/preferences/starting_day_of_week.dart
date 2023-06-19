@@ -33,14 +33,11 @@ class _StartingDayOfWeekState extends State<StartingDayOfWeek> {
                   const SizedBox(height: 2), // 박스 상단 사이즈
                   Row(
                     children: [
-                      Text(
+                      const Text(
                         '월요일 부터 시작',
                         style: TextStyle(
                           fontWeight: FontWeight.bold, // 텍스트 스타일 볼드
                           fontSize: 16.0, // 텍스트 사이즈
-                          fontStyle: Preferences().loadFontValue()
-                              ? FontStyle.normal
-                              : FontStyle.italic,
                         ),
                       ),
                       Expanded(

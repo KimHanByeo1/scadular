@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:scadule/GetX/preferences.dart';
 
 class CalendarStyles {
   static String convertWeekdayToStringValue(int weekDay) {
@@ -54,9 +53,6 @@ class Dow extends StatelessWidget {
         style: TextStyle(
           color: color,
           fontSize: fontSize,
-          fontStyle: Preferences().loadFontValue()
-              ? FontStyle.normal
-              : FontStyle.italic,
         ),
       ),
     );
@@ -95,9 +91,6 @@ class Day extends StatelessWidget {
               style: TextStyle(
                 color: isToday ? context.theme.colorScheme.onBackground : color,
                 fontSize: 16,
-                fontStyle: Preferences().loadFontValue()
-                    ? FontStyle.normal
-                    : FontStyle.italic,
               ),
             ),
           ),
